@@ -1,0 +1,259 @@
+<!-- Vista de Administrador -   -->
+<main>
+  <div class="main-content">
+    <!-- Header -->
+    <div class="top-header">
+      <h1>¡BIENVENIDO/A {{user.nombre}}!</h1>
+      <div class="user-profile">
+        <div class="user-icon" (click)="goToHome()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          <span class="status-dot active"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-container">
+      <!-- Lista de dropdowns del admin -->
+      <div class="admin-sections">
+        <!-- Cursos -->
+        <div class="dropdown-item" (click)="onDropdownClick('cursos')">
+          <span>Cursos</span>
+        </div>
+
+        <!-- Materias -->
+        <div class="dropdown-item" (click)="onDropdownClick('materias')">
+          <span>Materias</span>
+        </div>
+
+        <!-- Docentes -->
+        <div class="dropdown-item" (click)="onDropdownClick('docentes')">
+          <span>Docentes</span>
+        </div>
+
+        <!-- Estudiantes -->
+        <div class="dropdown-item" (click)="onDropdownClick('estudiantes')">
+          <span>Estudiantes</span>
+        </div>
+
+        <!-- Solicitudes -->
+        <div class="dropdown-item" (click)="onDropdownClick('solicitudes')">
+          <span>Solicitudes</span>
+        </div>
+
+        <!-- Notificaciones -->
+        <div class="dropdown-item" (click)="onDropdownClick('notificaciones')">
+          <span>Notificaciones</span>
+        </div>
+      </div>
+
+      <!-- Panel de Administración -->
+      <div class="panel-section">
+        <!-- Cursos -->
+        <div class="panel-item" id="cursos">
+          <div class="cursos-panel">
+            <h3>Cursos</h3>
+            <form method="post">
+              <label for="classroom-number">Número del curso:</label>
+              <input type="number" name="classroom-number" id="classroom-number">
+              <label for="classroom-year">Año que cursa:</label>
+              <select name="classroom-year" id="classroom-year">
+                <option value="2026">2026</option>
+                <option value="2027">2027</option>
+                <option value="2028">2028</option>
+                <option value="2029">2029</option>
+                <option value="2030">2030</option>
+                <option value="2031">2031</option>
+                <option value="2032">2032</option>
+              </select>
+              <label for="student-list">Seleccione a los alumnos que incorporarán este curso:</label>
+              <ul>
+                <li *ngFor="let student of students">
+                  <label>
+                    {{student.nombre}}
+                    <input type="checkbox" (change)="toggleSelection(student.id, $event, selectedStudentIds)">
+                  </label>
+                </li>
+              </ul>
+              <label for="teacher-list">Seleccione los profesores correspondientes al curso:</label>
+              <ul>
+                <li *ngFor="let teacher of teachers">
+                  <label>
+                    {{teacher.nombre}}
+                    <input type="checkbox" (change)="toggleSelection(teacher.id, $event, selectedTeacherIds)">
+                  </label>
+                </li>
+              </ul>
+              <button type="button" (click)="createClassroom()">Crear Curso</button>
+            </form>
+            <!-- Botones para elegir que comisión listar/mostrar -->
+            <button type="button">Comisión A</button>
+            <button type="button">Comisión B</button>
+            <div id="com-A">
+              <span>Comisión A</span>
+              <ul *ngFor="let class of classrooms">
+                <li *ngIf="class.alumnos">
+                  <div class="alumno-item">
+                    <span>{{class.alumnos}}</span>
+                    <div class="actions-container">
+                      <button type="button">Quitar</button>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div id="com-B">
+              <span>Comisión B</span>
+              <ul *ngFor="let class of classrooms">
+                <li *ngIf="class.alumnos">
+                  <div class="alumno-item">
+                    <span>{{class.alumnos}}</span>
+                    <div class="actions-container">
+                      <button type="button">Quitar</button>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <form method="post">
+              <label for="student">¿A quien le gustaria agregar?</label>
+              <select name="student" id="student-toadd">
+                <option disabled selected>Elija un alumno</option>
+                <option value="{{student.dni}}" *ngFor="let student of students">{{student.nombre}}</option>
+              </select>
+              <label for="comission">¿En que comisión?</label>
+              <select name="comission" id="comission">
+                <option disabled selected>Elija una comisión</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+              </select>
+              <label for="classroom-number">¿Número de curso?</label>
+              <select name="classroom-number" id="classroom-number">
+                <option disabled selected>Elija un curso</option>
+                <option value="{{classroom.numeroCurso}}" *ngFor="let classroom of classrooms">Curso
+                  {{classroom.numeroCurso}}</option>
+              </select>
+            </form>
+            <button type="button">Agregar Alumno</button>
+          </div>
+        </div>
+
+        <!-- Materias -->
+        <div class="panel-item" id="materias">
+          <div class="materias-panel">
+            <h3>Materias</h3>
+            <form method="post">
+              <label for="nombre-materia">Nombre de la materia: </label>
+              <input type="text" name="nombre-materia" id="nombre-materia">
+            </form>
+            <p class="error-message" id="blankName">El nombre de la materia no puede estar vacío.</p>
+            <button type="button" (click)="getSubjectData()">Agregar Materia</button>
+            <ul *ngFor="let subject of subjects">
+              <li>
+                <div class="materia-item">
+                  <span>{{subject.nombre}}</span>
+                  <div class="actions-container">
+                    <button type="button" (click)="getSubjectID(subject.id)">Quitar</button>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Docentes -->
+        <div class="panel-item" id="docentes">
+          <div class="docentes-panel">
+            <h3>Docentes</h3>
+            <ul *ngFor="let teacher of teachers">
+              <li>
+                <div class="docente-item">
+                  <span id="{{teacher.id}}">{{teacher.nombre}}</span>
+                  <div class="actions-container">
+                    <label for="subject-to-assign-{{teacher.id}}">Asignar materia:</label>
+
+                    <select name="subject-to-assign" id="subject-to-assign-{{teacher.id}}" #materiaSelect>
+                      <option selected disabled value="">Elija una materia</option>
+                      <option [value]="subject.id" *ngFor="let subject of subjects">{{subject.nombre}}</option>
+                    </select>
+
+                    <button type="button" (click)="asignarMateria(teacher.id, materiaSelect.value)">
+                      Asignar
+                    </button>
+
+                    <button type="button">Dar de baja</button>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Estudiantes -->
+        <div class="panel-item" id="estudiantes">
+          <div class="estudiantes-panel">
+            <h3>Estudiantes</h3>
+            <ul *ngFor="let student of students">
+              <li>
+                <div class="estudiante-item">
+                  <span>{{student.nombre}}</span>
+                  <div class="actions-container">
+                    <button type="button"(click)="deleteUser(student.id)" >Borrar</button>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Solicitudes -->
+        <div class="panel-item" id="solicitudes">
+          <div class="solicitudes-panel">
+            <h3>Solicitudes</h3>
+            <ul *ngFor="let solitude of solitudes">
+              <li>
+                <div class="solicitud-item">
+                  <span>{{solitude.nombre}}</span>
+                  <div class="actions-container">
+                    <button type="button" (click)="confirmRoleRequest(solitude.id)">Confirmar</button>
+                    <button type="button" (click)="denyRoleRequest(solitude.id)">Denegar</button>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Notificaciones -->
+        <div class="panel-item" id="notificaciones">
+          <h3>Notificaciones</h3>
+          <span>"El aula 36 está ocupando actualmente el televisor"</span> <br>
+          <span>"Un alumno no puede ingresar a la aplicación."</span> <br>
+          <span>"La aplicación se pondrá en mantenimiento a partir del 21 de Noviembre a las 11:00hs."</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar de Estudiantes -->
+  <div class="students-sidebar">
+    <div class="sidebar-header">
+      <span>Estudiantes</span>
+      <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
+    </div>
+
+    <!-- En tu HTML -->
+    <div class="students-list">
+      <div class="student-item" *ngFor="let student of students">
+        <div class="student-avatar">{{ student.nombre.substring(0,1) }}</div>
+        <span class="student-name">{{ student.nombre }}</span>
+        <span class="status-indicator" [class.active]="(student.isActive)"></span>
+      </div>
+    </div>
+  </div>
+</main>

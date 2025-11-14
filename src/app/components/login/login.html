@@ -1,0 +1,75 @@
+<!-- Vista de Login - Diseño  mockup -->
+<main>
+  <div class="login-container">
+    <!-- Ícono de usuario arriba -->
+    <div class="user-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+      </svg>
+    </div>
+
+    <!-- Formulario -->
+    <form (submit)="onSubmit($event)">
+      <!-- Campo DNI -->
+      <div class="input-group">
+        <label for="dni">D.N.I.</label>
+        <input
+          type="text"
+          id="dni"
+          name="dni"
+          placeholder=""
+          maxlength="8"
+          [(ngModel)]="credentials.dni"
+          (input)="hideError('dniFormat'); hideError('dniLength')"
+        />
+        <!-- Mensajes de error para DNI -->
+        <p class="error-message" id="dniLength">El DNI debe contener al menos 8 caracteres.</p>
+        <p class="error-message" id="dniFormat">Formato incorrecto. Ingresá un DNI válido.</p>
+        <p class="error-message" id="dniNotFound">Usuario no encontrado. Registrate primero.</p>
+      </div>
+
+      <!-- Campo Contraseña -->
+      <div class="input-group">
+        <label for="password">Contraseña</label>
+        <div class="password-wrapper">
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder=""
+            autocomplete="current-password"
+            [(ngModel)]="credentials.clave"
+          />
+          <!-- Botón para mostrar/ocultar contraseña -->
+          <button
+            type="button"
+            class="toggle-password"
+            (click)="togglePasswordVisibility()"
+            aria-label="Mostrar contraseña"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
+        </div>
+        <!-- Mensaje de error para contraseña -->
+        <p class="error-message" id="wrongPassword">Contraseña incorrecta. Intentalo de nuevo.</p>
+      </div>
+
+      <!-- Botones de acción -->
+      <div class="button-group">
+        <button type="submit" class="btn-signin" [disabled]="isLoading">
+          {{ isLoading ? 'Iniciando sesión...' : 'Sign in' }}
+        </button>
+        <button type="button" class="btn-register" routerLink="/register">Register</button>
+      </div>
+    </form>
+
+    <!-- Link contraseña olvidada -->
+    <div class="forgot-password">
+      <a href="#">¿Olvidaste tu contraseña?</a>
+    </div>
+  </div>
+</main>

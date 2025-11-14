@@ -1,0 +1,177 @@
+/* Estilos para el Register - Similar al Login con fondo blanco */
+
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding: 20px 0;
+}
+
+.register-container {
+  background-color: white;
+  border-radius: 12px;
+  padding: 40px 50px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 450px;
+}
+
+/* Ícono de usuario circular arriba */
+.user-icon {
+  width: 100px;
+  height: 100px;
+  background: #d4c5f9;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.user-icon svg {
+  width: 50px;
+  height: 50px;
+  color: #6a4c93;
+}
+
+/* Título */
+h2 {
+  text-align: center;
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 25px;
+}
+
+/* Formulario */
+form {
+  width: 100%;
+}
+
+.input-group {
+  margin-bottom: 18px;
+}
+
+label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+  box-sizing: border-box;
+}
+
+input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+/* Wrapper para el input de contraseña con botón */
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-wrapper input {
+  padding-right: 45px;
+}
+
+/* Botón para mostrar/ocultar contraseña */
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-password svg {
+  width: 22px;
+  height: 22px;
+  color: #999;
+}
+
+.toggle-password:hover svg {
+  color: #667eea;
+}
+
+/* Mensajes de error */
+.error-message {
+  color: #e53e3e;
+  font-size: 12px;
+  margin-top: 5px;
+  display: none; /* Ocultos por defecto, se muestran con JS */
+}
+
+/* Botones de acción */
+.button-group {
+  display: flex;
+  gap: 12px;
+  margin-top: 25px;
+}
+
+.btn-signin,
+.btn-register {
+  flex: 1;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: none;
+}
+
+.btn-signin {
+  background-color: #e8e8e8;
+  color: #333;
+}
+
+.btn-signin:hover {
+  background-color: #d0d0d0;
+}
+
+.btn-register {
+  background-color: #333;
+  color: white;
+}
+
+.btn-register:hover {
+  background-color: #1a1a1a;
+}
+
+/* Link de ya tengo cuenta */
+.have-account {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.have-account p {
+  font-size: 14px;
+  color: #666;
+}
+
+.have-account a {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.have-account a:hover {
+  text-decoration: underline;
+}

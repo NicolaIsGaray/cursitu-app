@@ -1,0 +1,143 @@
+<!-- Vista de Notificaciones Docente -  -->
+<main>
+  <div class="main-content">
+    <!-- Header -->
+    <div class="top-header">
+      <h1>¡BIENVENIDO DOCENTE!</h1>
+      <div class="user-profile">
+        <div class="user-icon" (click)="goToHome()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          <span class="status-dot active"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dropdown principal "Notificaciones" -->
+    <div class="notifications-dropdown">
+      <div class="dropdown-header" (click)="toggleNotificationsDropdown()">
+        <span>Notificaciones</span>
+        <svg class="dropdown-arrow" [class.expanded]="isNotificationsExpanded" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </div>
+
+      <!-- Contenido cuando está expandido -->
+      <div class="notifications-content" *ngIf="isNotificationsExpanded">
+        <!-- Tarjeta de materia con borde azul -->
+        <div class="subject-card-bordered" *ngFor="let subject of subjects">
+          <div class="subject-header" (click)="toggleSubject(subject)">
+            <div class="subject-placeholder"></div>
+            <div class="subject-info">
+              <h3>{{ subject.name }}</h3>
+              <p>Año: {{ subject.year }}</p>
+            </div>
+            <svg class="subject-arrow" [class.expanded]="subject.isExpanded" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="action-buttons">
+          <button class="btn-action" (click)="crearNotificacion()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 3 18 9"></polyline>
+            </svg>
+            Crear Notificación
+          </button>
+
+          <button class="btn-action" (click)="verNotificaciones()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+            Ver Notificaciones
+          </button>
+
+          <button class="btn-action" (click)="eliminarNotificacion()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+            Eliminar Notificación
+          </button>
+        </div>
+
+        <!-- Formulario de notificación -->
+        <div class="notification-form">
+          <div class="form-field">
+            <textarea
+              [(ngModel)]="notificationHeader"
+              placeholder="Encabezado de la notificación..."
+              class="textarea-input header-input"
+              rows="2"
+            ></textarea>
+          </div>
+
+          <div class="form-field">
+            <textarea
+              [(ngModel)]="notificationBody"
+              placeholder="Cuerpo de la notificación..."
+              class="textarea-input body-input"
+              rows="6"
+            ></textarea>
+          </div>
+
+          <!-- Destinatarios -->
+          <div class="recipients-section">
+            <div class="recipients-header">
+              <label>Enviar a:</label>
+              <input type="checkbox" [(ngModel)]="sendToAll" class="checkbox-main">
+            </div>
+
+            <div class="recipients-buttons">
+              <button class="btn-recipient todos" [class.active]="sendToAll" (click)="sendToAll = !sendToAll">
+                Todos
+              </button>
+
+              <button class="btn-recipient comisiones" [class.active]="sendToCommissions" (click)="sendToCommissions = !sendToCommissions">
+                Comision/es
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+
+              <button class="btn-recipient grupos" [class.active]="sendToGroups" (click)="sendToGroups = !sendToGroups">
+                Grupo/s
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+
+              <button class="btn-recipient alumnos" [class.active]="sendToStudents" (click)="sendToStudents = !sendToStudents">
+                Alumno/s
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar de Estudiantes -->
+  <div class="students-sidebar">
+    <div class="sidebar-header">
+      <span>Estudiantes</span>
+      <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
+    </div>
+
+    <div class="students-list">
+      <div class="student-item" *ngFor="let student of students">
+        <div class="student-avatar">{{ student.initial }}</div>
+        <span class="student-name">{{ student.name }}</span>
+        <span class="status-indicator" [class.active]="student.isActive"></span>
+      </div>
+    </div>
+  </div>
+</main>

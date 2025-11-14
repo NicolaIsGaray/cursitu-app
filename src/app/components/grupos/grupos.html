@@ -1,0 +1,127 @@
+<!-- Vista de Grupos del Estudiante -   -->
+<main>
+  <div class="main-content">
+    <!-- Header -->
+    <div class="top-header">
+      <h1>¡BIENVENIDO/A {{(this.user.nombre).toUpperCase()}}!</h1>
+      <div class="user-profile">
+        <div class="user-icon" (click)="goToHome()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          <span class="status-dot active"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dropdown principal "Grupos" -->
+    <div class="groups-dropdown">
+      <div class="dropdown-header">
+        <span>Grupos</span>
+        <svg class="dropdown-arrow" [class.expanded]="isGroupsExpanded" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </div>
+
+      <!-- Contenido cuando está expandido -->
+      <div class="groups-content" *ngIf="isGroupsExpanded">
+        <!-- Tarjetas de materias -->
+        <div class="subjects-grid">
+          <div class="subject-card" *ngFor="let subject of subjects" [style.background-color]="subject.color">
+            <div class="subject-header" (click)="toggleSubject(subject)">
+              <div class="subject-info">
+                <h3>{{ subject.nombre }}</h3>
+                <p>Año: {{ subject.year }}</p>
+                <p>Comisión: {{ subject.comision }}</p>
+              </div>
+              <svg class="subject-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lista de grupos -->
+        <div class="groups-list">
+          <div class="group-container" *ngFor="let group of groups">
+            <!-- Header del grupo -->
+            <div class="group-header">
+              <span>GRUPO {{ group.nombre }}</span>
+              <svg class="group-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+
+            <!-- Contenido del grupo -->
+            <div class="group-content">
+              <!-- Lista de miembros -->
+              <div class="members-list">
+                <div class="member-item" *ngFor="let member of group.miembros">
+                  <div class="member-avatar">{{ member.nombre.substring(0,1) }}</div>
+                  <span class="member-name">{{ member.nombre }}</span>
+                </div>
+              </div>
+
+              <!-- Sección para invitar -->
+              <div class="invite-section">
+                <label>INVITAR AL GRUPO:</label>
+                <input
+                  type="text"
+                  [(ngModel)]="newMemberName"
+                  placeholder="Ingrese nombre de alumno..."
+                  class="invite-input"
+                />
+                <button class="btn-invite" (click)="inviteToGroup(group)">Invitar</button>
+              </div>
+
+              <!-- Botones de acción -->
+              <div class="group-actions">
+                <button class="btn-leave" (click)="leaveGroup(group)">
+                  SALIR DEL GRUPO
+                </button>
+                <button class="btn-join" (click)="joinGroup()">
+                  UNIRME A UN GRUPO
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="group-content">
+              <div class="group-actions">
+                <form method="post">
+                  <label for="group-name">Nombre del grupo:</label>
+                  <input type="text" name="group-name" id="group-name" maxlength="30">
+                  <label for="group-limit">Tamaño del grupo (máximo 6 integrantes):</label>
+                  <input type="text" name="group-limit" id="group-limit" maxlength="1">
+                  <button class="btn-create" (click)="getGroupForm()">
+                    CREAR GRUPO
+                  </button>
+                </form>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar de Estudiantes -->
+  <div class="students-sidebar">
+    <div class="sidebar-header">
+      <span>Estudiantes</span>
+      <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
+    </div>
+
+    <div class="students-list">
+      <div class="student-item" *ngFor="let student of students">
+        <div class="student-avatar">{{ student.nombre.substring(0,1) }}</div>
+        <span class="student-name">{{ student.nombre }}</span>
+        <span class="status-indicator" [class.active]="student.isActive"></span>
+      </div>
+    </div>
+  </div>
+</main>

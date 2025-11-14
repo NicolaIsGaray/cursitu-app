@@ -1,0 +1,125 @@
+<!-- Vista de Register - Similar al login pero con campos adicionales -->
+<main>
+  <div class="register-container">
+    <!-- Ícono de usuario arriba -->
+    <div class="user-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+      </svg>
+    </div>
+
+    <h2>Crear Cuenta</h2>
+
+    <!-- Formulario -->
+    <form (submit)="getFormData($event)">
+      <!-- Campo Nombre Completo -->
+      <div class="input-group">
+        <label for="fullname">Nombre Completo</label>
+        <input
+          type="text"
+          id="fullname"
+          name="fullname"
+          placeholder=""
+          autocomplete="name"
+        />
+        <p class="error-message" id="nameRequired">El nombre es requerido.</p>
+      </div>
+
+      <!-- Campo DNI -->
+      <div class="input-group">
+        <label for="dni">Documento Nacional de Identidad</label>
+        <input
+          type="text"
+          id="dni"
+          name="dni"
+          placeholder=""
+          maxlength="8"
+          autocomplete="username"
+        />
+        <!-- Mensajes de error para DNI -->
+        <p class="error-message" id="dniLength">El DNI debe contener al menos 8 caracteres.</p>
+        <p class="error-message" id="dniFormat">Formato incorrecto. Ingresá un DNI válido.</p>
+      </div>
+
+      <!-- Campo Email -->
+      <div class="input-group">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="estudiante@gmail.com"
+          autocomplete="username"
+        />
+        <!-- Mensaje de error para Email -->
+        <p class="error-message" id="emailFormat">Formato incorrecto. Ingresá un correo válido.</p>
+      </div>
+
+      <!-- Campo Contraseña -->
+      <div class="input-group">
+        <label for="password">Contraseña</label>
+        <div class="password-wrapper">
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder=""
+            autocomplete="new-password"
+          />
+          <!-- Botón para mostrar/ocultar contraseña -->
+          <button
+            type="button"
+            class="toggle-password"
+            (click)="togglePasswordVisibility('password')"
+            aria-label="Mostrar contraseña"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
+        </div>
+        <p class="error-message" id="passwordShort">La contraseña debe tener al menos 6 caracteres.</p>
+      </div>
+
+      <!-- Campo Confirmar Contraseña -->
+      <div class="input-group">
+        <label for="confirmPassword">Confirmar Contraseña</label>
+        <div class="password-wrapper">
+          <input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            placeholder=""
+            autocomplete="new-password"
+          />
+          <!-- Botón para mostrar/ocultar contraseña -->
+          <button
+            type="button"
+            class="toggle-password"
+            (click)="togglePasswordVisibility('confirmPassword')"
+            aria-label="Mostrar contraseña"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
+        </div>
+        <p class="error-message" id="passwordMismatch">Las contraseñas no coinciden.</p>
+      </div>
+
+      <!-- Botones de acción -->
+      <div class="button-group">
+        <button type="button" class="btn-signin" routerLink="/login">Sign in</button>
+        <button type="submit" class="btn-register">Register</button>
+      </div>
+    </form>
+
+    <!-- Link para ir a login -->
+    <div class="have-account">
+      <p>¿Ya tenés cuenta? <a routerLink="/login">Iniciá sesión</a></p>
+    </div>
+  </div>
+</main>

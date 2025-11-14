@@ -1,0 +1,125 @@
+<!-- Vista de Tareas Docente -   -->
+<main>
+  <div class="main-content">
+    <!-- Header -->
+    <div class="top-header">
+      <h1>¡BIENVENIDO DOCENTE!</h1>
+      <div class="user-profile">
+        <div class="user-icon" (click)="goToHome()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          <span class="status-dot active"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dropdown principal "Tareas" -->
+    <div class="tasks-dropdown">
+      <div class="dropdown-header" (click)="toggleTasksDropdown()">
+        <span>Tareas</span>
+        <svg class="dropdown-arrow" [class.expanded]="isTasksExpanded" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </div>
+
+      <!-- Contenido cuando está expandido -->
+      <div class="tasks-content" *ngIf="isTasksExpanded">
+        <!-- Tarjeta de materia -->
+        <div class="subject-card" *ngFor="let subject of subjects">
+          <div class="subject-header" (click)="toggleSubject(subject)">
+            <div class="subject-placeholder"></div>
+            <div class="subject-info">
+              <h3>{{ subject.name }}</h3>
+              <p>Año: {{ subject.year }}</p>
+            </div>
+            <svg class="subject-arrow" [class.expanded]="subject.isExpanded" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Panel para subir tarea -->
+        <div class="upload-task-panel">
+          <div class="panel-header">
+            <span>SUBIR TAREA</span>
+            <svg class="panel-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+
+          <div class="panel-content">
+            <div class="task-layout">
+              <!-- Columna izquierda: Ícono PDF y título -->
+              <div class="task-preview">
+                <div class="file-icon pdf">
+                  <span>PDF</span>
+                </div>
+                <p class="task-name">{{ taskTitle }}</p>
+              </div>
+
+              <!-- Columna derecha: Formulario -->
+              <div class="task-form">
+                <div class="info-section">
+                  <h4>INFORMACIÓN:</h4>
+
+                  <!-- Fecha de entrega -->
+                  <div class="form-row">
+                    <label>FECHA DE ENTREGA</label>
+                    <input type="date" [(ngModel)]="dueDate" class="date-input">
+                  </div>
+
+                  <!-- Curso -->
+                  <div class="form-row">
+                    <label>CURSO</label>
+                    <select [(ngModel)]="selectedCourse" class="select-input">
+                      <option *ngFor="let course of courses" [value]="course">{{ course }}</option>
+                    </select>
+                  </div>
+
+                  <!-- Comisión -->
+                  <div class="form-row">
+                    <label>COMISIÓN</label>
+                    <select [(ngModel)]="selectedCommission" class="select-input">
+                      <option *ngFor="let commission of commissions" [value]="commission">{{ commission }}</option>
+                    </select>
+                  </div>
+
+                  <!-- En grupo checkbox -->
+                  <div class="form-row checkbox-row">
+                    <label>EN GRUPO</label>
+                    <input type="checkbox" [(ngModel)]="isGroupTask" class="checkbox-input">
+                  </div>
+                </div>
+
+                <!-- Botón subir -->
+                <button class="btn-upload" (click)="subirTarea()">
+                  SUBIR TAREA
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar de Estudiantes -->
+  <div class="students-sidebar">
+    <div class="sidebar-header">
+      <span>Estudiantes</span>
+      <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
+    </div>
+
+    <div class="students-list">
+      <div class="student-item" *ngFor="let student of students">
+        <div class="student-avatar">{{ student.initial }}</div>
+        <span class="student-name">{{ student.name }}</span>
+        <span class="status-indicator" [class.active]="student.isActive"></span>
+      </div>
+    </div>
+  </div>
+</main>
