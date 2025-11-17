@@ -1,4 +1,4 @@
 export const environment = {
     production: true,
-    apiUrl: ''
+    apiUrl: 'https://cursitu-production.up.railway.app/cursitu-app'
 }

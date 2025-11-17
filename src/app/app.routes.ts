@@ -21,14 +21,14 @@ export const routes: Routes = [
     {path: "grupos", component: Grupos, canActivate: [AuthGuard]},
 
     // Rutas de Docente
-    {path: "tareas-docente", component: TareasDocente, canActivate: [AuthGuard], data: { expectedRoles: ['PROFESOR', 'ADMIN'] }},
-    {path: "notificaciones-docente", component: NotificacionesDocente, canActivate: [AuthGuard], data: { expectedRoles: ['PROFESOR', 'ADMIN'] }},
+    {path: "tareas-docente", component: TareasDocente, canActivate: [AuthGuard], data: { roles: ['ROLE_PROFESOR', 'ROLE_ADMIN'] }},
+    {path: "notificaciones-docente", component: NotificacionesDocente, canActivate: [AuthGuard], data: { roles: ['ROLE_PROFESOR', 'ROLE_ADMIN'] }},
 
     // Rutas Multi-Rol
     {path: "materias", component: Materias, canActivate: [AuthGuard]},
 
     // Rutas de Administrador
-    {path: "administrador", component: Administrador, canActivate: [AuthGuard], data: { expectedRoles: ['ADMIN'] }},
+    {path: "administrador", component: Administrador, canActivate: [AuthGuard], data: { roles: ['ROLE_ADMIN'] }},
 
     // Redirect por defecto
     {path: "", pathMatch: 'full', redirectTo: "home"},

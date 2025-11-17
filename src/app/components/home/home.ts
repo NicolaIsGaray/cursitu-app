@@ -4,13 +4,15 @@ import { Router, RouterLink } from '@angular/router';
 import { User } from '../../models/user';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
-
-// Interfaz para las tareas
-interface Task {
+// Interfaz para las notificaciones
+interface Notification {
+  icon: 'assignment' | 'message' | 'system' | 'group';
   title: string;
-  description: string;
+  message: string;
   time: string;
+  read: boolean;
 }
+
 
 @Component({
   selector: 'app-home',
@@ -39,6 +41,8 @@ export class Home {
   getUserData() {
     this.userService.getUserInfo(this.dni).subscribe({
       next: (data: any) => {
+        // Los roles se obtienen del AuthService para mantener una única fuente de verdad.
+        const currentUser = this.authService.getCurrentUser();
         this.user = {
           id: data.id,
           email: data.email,
@@ -46,7 +50,7 @@ export class Home {
           clave: data.clave,
           dni: data.dni,
           isActive: data.isActive,
-          roles: data.roles,
+          roles: currentUser?.roles || [], // Usamos los roles del AuthService
           comision: data.comision || []
         };
       },
@@ -89,16 +93,48 @@ export class Home {
   // Página actual para la paginación
   currentPage = 1;
 
-  // Lista de tareas hardcodeadas (el backend va a traer esto)
-  tasks: Task[] = [
-    { title: 'Title', description: 'Description', time: '9:41 AM' },
-    { title: 'Title', description: 'Description', time: '9:41 AM' },
-    { title: 'Title', description: 'Description', time: '9:41 AM' },
+  // --- NOTIFICACIONES ---
+  notificationsVisible = false;
+  notifications: Notification[] = [
+    {
+      icon: 'assignment',
+      title: 'Nueva tarea asignada',
+      message: 'El profesor de "Matemática Discreta" ha asignado un nuevo trabajo práctico.',
+      time: 'Hace 15 min',
+      read: false,
+    },
+    {
+      icon: 'message',
+      title: 'Mensaje de Juan Pérez',
+      message: 'Hola, ¿podemos revisar el punto 3 del proyecto?',
+      time: 'Hace 1 hora',
+      read: false,
+    },
+    {
+      icon: 'group',
+      title: 'Te han añadido a un grupo',
+      message: 'Has sido añadido al grupo "Proyecto Final de Sistemas Operativos".',
+      time: 'Hace 3 horas',
+      read: true,
+    },
+    {
+      icon: 'system',
+      title: 'Mantenimiento programado',
+      message: 'El sistema estará en mantenimiento este domingo de 02:00 a 04:00 AM.',
+      time: 'Ayer',
+      read: true,
+    },
+    {
+      icon: 'assignment',
+      title: 'Calificación recibida',
+      message: 'Tu entrega para "Algoritmos I" ha sido calificada.',
+      time: 'Hace 2 días',
+      read: true,
+    },
   ];
 
   // Función para cambiar el estado de un dropdown y navegar
-  // NOTA: Ahora navega a las páginas específicas de tareas y grupos
-  toggleDropdown(type: 'materias' | 'tareas' | 'grupos') {
+  toggleDropdown(type: 'materias' | 'tareas' | 'grupos' | 'mis-materias') {
     console.log(`Dropdown seleccionado: ${type}`);
 
     // Navegar el tipo
@@ -108,6 +144,8 @@ export class Home {
       this.router.navigate(['/grupos']);
     } else if (type === 'materias') {
       this.router.navigate(['/materias']);
+    } else if (type === 'mis-materias') {
+      this.router.navigate(['/tareas-docente']);
     } else {
       alert("Parece que hubo un error...");
     }
@@ -115,9 +153,8 @@ export class Home {
 
   // Función para mostrar notificaciones
   toggleNotifications() {
-    console.log('Abriendo notificaciones');
-    // Acá el backend va a traer las notificaciones del usuario
-    alert('Panel de notificaciones - el backend va a cargar esto');
+    this.notificationsVisible = !this.notificationsVisible;
+    console.log(`Visibilidad de notificaciones: ${this.notificationsVisible}`);
   }
 
   // Navegar a la página anterior
@@ -142,6 +179,12 @@ export class Home {
     this.obtainDNIFromAuth();
     this.getUserData();
     this.getOnlyStudents();
+  }
+
+  userHasRole(role: string): boolean {
+    console.log(this.authService.hasRole(role));
+    
+    return this.authService.hasRole(role);
   }
 
   isAdmin(): boolean {

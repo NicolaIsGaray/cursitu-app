@@ -1,21 +1,13 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-
-// Interfaz para los estudiantes
-interface Student {
-  initial: string;
-  name: string;
-  isActive: boolean;
-}
-
-// Interfaz para las materias
-interface Subject {
-  name: string;
-  year: string;
-  commission: string;
-  color: string;
-}
+import { Subjects } from '../../models/subjects';
+import { AuthService } from '../../services/auth.service';
+import { UserService } from '../../services/user.service';
+import { GroupService } from '../../services/group.service';
+import { ClassroomService } from '../../services/classroom.service';
+import { SubjectsService } from '../../services/subjects.service';
+import { User } from '../../models/user';
 
 @Component({
   selector: 'app-materias',
@@ -24,48 +16,146 @@ interface Subject {
   styleUrl: './materias.css',
 })
 export class Materias {
-  // Dropdown de "Materias" está expandido por defecto
-  isSubjectsExpanded = true;
+  // Usuario Autenticado Actual
+  user!: User;
+
+  userID!: User;
+
+  userSub!: any;
+  dni!: any;
+
+  currentUser: any;
 
   // Lista de estudiantes
-  students: Student[] = [
-    { initial: 'A', name: 'Pedro Sanchez', isActive: true },
-    { initial: 'A', name: 'Ken Masters', isActive: true },
-    { initial: 'A', name: 'Joaquin Diaz', isActive: true },
-    { initial: 'A', name: 'Nicolas Martinez', isActive: false },
-    { initial: 'A', name: 'Victoria Celeste', isActive: true },
-    { initial: 'A', name: 'Diego Correa', isActive: false },
-    { initial: 'A', name: 'Lucy Steel', isActive: false },
-    { initial: 'A', name: 'Ivan Vanko', isActive: false },
-    { initial: 'A', name: 'Franco Polo', isActive: false },
-    { initial: 'A', name: 'Florencia Rojas', isActive: false },
-    { initial: 'A', name: 'Santiago Perez', isActive: true },
-    { initial: 'A', name: 'Juan Pablo', isActive: true },
-  ];
+  students!: User[];
 
-  // Lista de materias
-  subjects: Subject[] = [
-    { name: 'Sistemas Operativos', year: '2025', commission: 'A', color: 'red' },
-    { name: 'Base de Datos', year: '2025', commission: 'A', color: 'gray' },
-    { name: 'Programación Estructurada', year: '2025', commission: 'A', color: 'light-gray' },
-  ];
+  constructor(private router: Router,
+    private authService: AuthService,
+    private userService: UserService,
+    private subjectService: SubjectsService) { };
 
-  constructor(private router: Router) {}
 
-  // Toggle del dropdown principal "Materias"
-  toggleSubjectsDropdown() {
-    this.isSubjectsExpanded = !this.isSubjectsExpanded;
+  // Obtener datos del usuario actual
+  getUserData() {
+    this.userService.getUserInfo(this.dni).subscribe({
+      next: (data: any) => {
+        this.user = {
+          id: data.id,
+          email: data.email,
+          nombre: data.nombre,
+          clave: data.clave,
+          dni: data.dni,
+          isActive: data.isActive,
+          roles: data.roles,
+          comision: data.comision || []
+        };
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
+  }
+
+  // Obtener usuario mediante ID
+  getUserByID(id: number): void {
+    this.userService.getUserByID(id).subscribe({
+      next: (data) => {
+        this.userID = data;
+
+        console.log(this.userID);
+
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
+  }
+
+  // Obtener solo estudiantes
+  getOnlyStudents(): void {
+    this.userService.getUsers().subscribe({
+      next: (data) => {
+        this.students = data.filter((user: User) => {
+          if (!user.roles || !Array.isArray(user.roles)) {
+            return true;
+          }
+
+          const hasProfesorRole = user.roles.some((roleObj: any) =>
+            roleObj.role?.toUpperCase().includes('PROFESOR') ||
+            roleObj.role?.toUpperCase().includes('ADMIN')
+          );
+
+          return !hasProfesorRole;
+        });
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
+  }
+
+  // Obtener el DNI del usuario autenticado
+  obtainDNIFromAuth(): void {
+    this.userSub = this.authService.currentUser$.subscribe(user => {
+      this.dni = user?.username || null;
+    });
+  }
+
+  // Lista de Materias
+  subjects?: Subjects[];
+
+  // Materia seleccionada para mostrar detalles
+  selectedSubject: Subjects | null = null;
+  subjectDetails: any = null;
+
+  // Obtener todas las materias
+  getSubjects(): void {
+    this.subjectService.getSubjects().subscribe({
+      next: (data) => {
+        this.subjects = data;
+      },
+      error: (err) => {
+        console.error(err);
+
+      }
+    });
   }
 
   // Click en una materia
-  onSubjectClick(subject: Subject) {
-    console.log(`Materia seleccionada: ${subject.name}`);
-    // Acá el backend va a cargar los detalles de la materia
-    alert(`Ver detalles de ${subject.name} - el backend va a cargar esto`);
+  onSubjectClick(subject: Subjects) {
+    this.selectedSubject = subject;
+    this.loadSubjectDetails(subject);
+  }
+
+  // Carga los detalles simulados de la materia
+  loadSubjectDetails(subject: Subjects) {
+    this.subjectDetails = {
+      descripcion: `Una breve descripción sobre ${subject.nombre}. Este curso cubre los fundamentos y temas avanzados para proporcionar una comprensión completa.`,
+      programaAnalitico: `Unidad 1: Introducción a ${subject.nombre}.\nUnidad 2: Conceptos Clave.\nUnidad 3: Aplicaciones Prácticas.\nUnidad 4: Tópicos Avanzados.\nUnidad 5: Proyecto Final.`,
+      clases: [
+        { id: 1, nombre: 'Clase 1: Fundamentos', expanded: false },
+        { id: 2, nombre: 'Clase 2: Desarrollo de Conceptos', expanded: false },
+        { id: 3, nombre: 'Clase 3: Ejercicios Prácticos', expanded: false },
+        { id: 4, nombre: 'Clase 4: Revisión y Consultas', expanded: false },
+      ]
+    };
+  }
+
+  // Expande o contrae una clase
+  toggleClase(clase: any) {
+    clase.expanded = !clase.expanded;
   }
 
   // Navegar al home
   goToHome() {
     this.router.navigate(['/home']);
+  }
+
+  ngOnInit(): void {
+    this.getOnlyStudents();
+    this.obtainDNIFromAuth();
+    this.getUserData();
+
+    this.getSubjects();
   }
 }

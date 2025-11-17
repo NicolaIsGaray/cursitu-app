@@ -35,6 +35,31 @@ main {
   margin: 0;
 }
 
+/* Estilo base para botones de acción */
+.btn {
+  padding: 10px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+/* Botón secundario (contorno) */
+.btn-outline {
+  background-color: transparent;
+  color: #6a4c93;
+  border: 2px solid #d4c5f9;
+}
+
+.btn-outline:hover {
+  background-color: #6a4c93;
+  color: white;
+  border-color: #6a4c93;
+}
+
 .user-profile {
   position: relative;
 }
@@ -164,6 +189,110 @@ main {
 .subject-info p {
   font-size: 13px;
   margin: 2px 0;
+}
+
+/* ===== DETALLES DE LA MATERIA ===== */
+
+.subject-details-container {
+  margin-top: 40px;
+  padding: 30px;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+}
+
+.details-header {
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 25px;
+}
+
+.details-header h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #6a4c93;
+  margin: 0 0 10px 0;
+}
+
+.details-header p {
+  font-size: 15px;
+  color: #555;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Tarjeta del Programa Analítico */
+.program-card {
+  background-color: #f9f7fd;
+  border: 1px solid #e0d8f0;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 30px;
+}
+
+.program-card h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 15px 0;
+}
+
+.program-card pre {
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 6px;
+  white-space: pre-wrap; /* Para que el texto se ajuste */
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #444;
+  border: 1px solid #eee;
+}
+
+/* Sección de Módulos/Clases */
+.modules-section h4 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.modules-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.module-item .dropdown-header {
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+}
+
+.module-item .dropdown-header:hover {
+  background-color: #f9f9f9;
+}
+
+.module-content {
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  background-color: #fdfdfd;
+}
+
+.module-content p {
+  margin-top: 0;
+  font-size: 14px;
+}
+
+.module-content ul {
+  padding-left: 20px;
+  font-size: 14px;
+  color: #555;
+}
+
+.module-content li {
+  margin-bottom: 8px;
 }
 
 /* ===== SIDEBAR DE ESTUDIANTES ===== */

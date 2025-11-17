@@ -35,6 +35,31 @@ main {
   margin: 0;
 }
 
+/* Estilo base para botones de acción */
+.btn {
+  padding: 10px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+/* Botón secundario (contorno) */
+.btn-outline {
+  background-color: transparent;
+  color: #6a4c93;
+  border: 2px solid #d4c5f9;
+}
+
+.btn-outline:hover {
+  background-color: #6a4c93;
+  color: white;
+  border-color: #6a4c93;
+}
+
 .user-profile {
   position: relative;
 }

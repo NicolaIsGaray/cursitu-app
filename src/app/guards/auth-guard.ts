@@ -19,15 +19,32 @@ export class AuthGuard implements CanActivate {
       return false;
     }
 
-    // Verificar roles si se especifican en la ruta
-    const requiredRoles = route.data['roles'] as Array<string>;
-    if (requiredRoles && requiredRoles.length > 0) {
-      if (!this.authService.hasAnyRole(requiredRoles)) {
+    // Obtener roles requeridos
+    const requiredRoles = this.getRequiredRoles(route);
+    
+    if (requiredRoles.length > 0) {
+      const hasAccess = this.authService.hasAnyRole(requiredRoles);
+      
+      if (!hasAccess) {
         this.router.navigate(['/acceso-denegado']);
         return false;
       }
     }
 
     return true;
+  }
+
+  private getRequiredRoles(route: ActivatedRouteSnapshot): string[] {
+    const routeData = route.data;
+    
+    if (routeData['roles'] && Array.isArray(routeData['roles'])) {
+      return routeData['roles'];
+    }
+    
+    if (routeData['role']) {
+      return [routeData['role']];
+    }
+    
+    return [];
   }
 }

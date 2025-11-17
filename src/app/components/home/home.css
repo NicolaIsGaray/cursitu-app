@@ -78,6 +78,34 @@ main {
   color: #6a4c93;
 }
 
+.logout-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  background-color: #e53935; /* Un tono de rojo moderno */
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px; /* Espacio por si quieres añadir un ícono */
+}
+
+.logout-button:hover {
+  background-color: #c62828; /* Un rojo un poco más oscuro al pasar el mouse */
+  transform: translateY(-2px); /* Efecto sutil de elevación */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.logout-button:active {
+  transform: translateY(0); /* Vuelve a la posición original al hacer clic */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 /* Punto verde de estado */
 .status-dot {
   position: absolute;
@@ -184,6 +212,15 @@ main {
   background: #e0e0e0;
   border-radius: 50%;
   flex-shrink: 0;
+}
+
+/* Estilos para los íconos de notificación dentro del contenedor de tareas */
+.tasks-container .notification-icon-wrapper svg {
+  width: 20px;
+  height: 20px;
+  color: #6a4c93;
+  stroke-width: 2;
+  fill: none;
 }
 
 /* Info de la tarea */
@@ -396,5 +433,162 @@ main {
 
   .pagination {
     gap: 20px;
+  }
+
+  .top-header {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
+
+  .user-profile {
+    flex-direction: column-reverse;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .user-profile a, .user-profile button {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* ===== SIDEBAR DE NOTIFICACIONES ===== */
+
+.notifications-sidebar {
+  width: 400px;
+  background: white;
+  border-left: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 1000;
+  transform: translateX(100%);
+  transition: transform 0.3s ease-in-out;
+  box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+}
+
+.notifications-sidebar.show {
+  transform: translateX(0);
+}
+
+.notifications-sidebar .sidebar-header {
+  background: #fafafa;
+}
+
+.notifications-sidebar .close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  padding: 0 8px;
+}
+
+.notifications-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+}
+
+.notification-item {
+  display: flex;
+  gap: 15px;
+  padding: 15px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s;
+}
+
+.notification-item:hover {
+  background-color: #f9f9f9;
+}
+
+.notification-item.unread {
+  background-color: #f3f0f7;
+  border-left: 3px solid #6a4c93;
+}
+
+.notification-icon-wrapper {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  background-color: #e9e4f5;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-icon-wrapper svg {
+  width: 20px;
+  height: 20px;
+  color: #6a4c93;
+  stroke-width: 2;
+  fill: none;
+}
+
+.notification-content {
+  flex: 1;
+}
+
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.notification-title {
+  font-weight: 600;
+  color: #333;
+  font-size: 15px;
+  margin: 0;
+}
+
+.notification-time {
+  font-size: 12px;
+  color: #999;
+}
+
+.notification-message {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.no-notifications {
+  text-align: center;
+  color: #888;
+  padding: 50px 20px;
+  font-style: italic;
+}
+
+.sidebar-footer {
+  padding: 15px;
+  border-top: 1px solid #e0e0e0;
+  text-align: center;
+}
+
+.btn-clear {
+  background: none;
+  border: 1px solid #ccc;
+  color: #555;
+  padding: 8px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-clear:hover {
+  background-color: #f5f5f5;
+}
+
+@media screen and (max-width: 768px) {
+  .notifications-sidebar {
+    width: 100%;
+    max-width: 320px; /* O el ancho que prefieras en móvil */
   }
 }

@@ -23,9 +23,11 @@ main {
 /* Header */
 .top-header {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
   margin-bottom: 30px;
+  gap: 15px;
+  text-align: center;
 }
 
 .top-header h1 {
@@ -73,7 +75,7 @@ main {
   display: flex;
   flex-direction: column;
   gap: 15px;
-  max-width: 600px;
+  width: 280px;
 }
 
 .dropdown-item {
@@ -108,10 +110,13 @@ main {
 .panel-container {
   display: flex;
   flex-direction: row;
+  gap: 40px;
+  align-items: flex-start; /* Alinea los items al inicio */
 }
 
 .panel-section {
   width: 100%;
+  flex: 1;
 }
 
 .panel-item {
@@ -133,7 +138,484 @@ main {
 
 .cursos-panel {
   border: #e0e0e0 1px solid;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
 }
+
+.cursos-panel #com-A,
+.cursos-panel #com-B {
+  display: block;
+  display: none;
+}
+
+.cursos-panel #com-A.showComision,
+.cursos-panel #com-B.showComision {
+  display: block;
+}
+
+.cursos-panel h3 {
+  font-size: 18px;
+  color: #6a4c93;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+/* Contenedor para formularios */
+.form-section {
+  margin-bottom: 30px;
+  padding: 20px;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  background-color: #fdfdfd;
+}
+
+.form-section h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+/* Grupo de Label + Input */
+.form-group {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #555;
+  margin-bottom: 6px;
+}
+
+.form-control {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  width: 100%;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #6a4c93;
+  box-shadow: 0 0 0 2px rgba(106, 76, 147, 0.2);
+}
+
+.form-control option:disabled {
+  color: #aaa;
+  font-style: italic;
+}
+
+/* Lista deslizable para checkboxes */
+.checkbox-list {
+  max-height: 180px;
+  overflow-y: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 10px;
+  background-color: #fff;
+  list-style-type: none;
+}
+
+.checkbox-list li {
+  padding: 8px 5px;
+}
+
+.checkbox-list label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.checkbox-list li.disabled {
+  color: #9e9e9e;
+  text-decoration: line-through;
+  cursor: not-allowed;
+}
+
+.checkbox-list li.disabled label {
+  cursor: not-allowed;
+}
+
+.empty-list-message {
+  font-style: italic;
+  color: #888;
+  padding: 10px 0;
+  font-size: 14px;
+}
+
+.course-list {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.course-card {
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 20px;
+}
+.course-card {
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 20px;
+  position: relative; /* Necesario para posicionar el icono de borrado */
+}
+
+.delete-course-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  color: #e53935;
+  font-size: 20px;
+}
+
+.delete-course-icon:hover {
+  color: #c62828;
+}
+
+.course-card h5 {
+  font-size: 1.1rem;
+  color: #6a4c93;
+  margin-bottom: 15px;
+}
+
+.course-card h6 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #333;
+  margin-top: 15px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 5px;
+}
+
+.list-member-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  font-size: 14px;
+}
+
+/* === ESTILOS PARA LISTAS DE ITEMS (Materias, Docentes, etc) === */
+.list-section {
+  margin-top: 30px;
+}
+
+.list-section h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.item-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 6px;
+}
+
+.list-item .item-name {
+  flex-grow: 1;
+  font-weight: 500;
+}
+
+.docente-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap; /* Permitir que los elementos se envuelvan */
+  flex-basis: 50%;
+}
+
+.list-item .actions-container {
+  display: flex;
+  gap: 10px;
+}
+
+/* === ESTILOS PARA TABLAS DE GESTIÓN (Estudiantes, etc) === */
+.table-container {
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  white-space: nowrap;
+}
+
+.admin-table thead th {
+  background-color: #f8f6fa;
+  color: #6a4c93;
+  font-weight: 600;
+  border-bottom: 2px solid #e0d8f0;
+}
+
+.admin-table tbody tr:hover {
+  background-color: #fdfcff;
+}
+
+.admin-table .text-right {
+  text-align: right;
+}
+
+/* === ESTILOS PARA BOTONES === */
+
+/* Estilo base para botones de acción */
+.btn {
+  padding: 10px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+/* Botón primario (morado) */
+.btn-primary {
+  background-color: #6a4c93;
+  color: white;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.btn-primary:hover {
+  background-color: #5e4482;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* Botones para alternar vistas (Comisiones) */
+.btn-toggle-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.btn-toggle {
+  background-color: #fff;
+  color: #6a4c93;
+  border: 1px solid #d4c5f9;
+}
+
+.btn-toggle:hover {
+  background-color: #f9f7fd;
+  border-color: #6a4c93;
+}
+
+.btn-toggle.active {
+  background-color: #6a4c93;
+  color: white;
+  border-color: #6a4c93;
+}
+
+/* Botón de peligro (rojo) */
+.btn-danger {
+  background-color: #e53935;
+  color: white;
+  padding: 5px 10px;
+  font-size: 13px;
+}
+
+.btn-sm {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+/* Botón de éxito (verde) */
+.btn-success {
+  background-color: #4caf50;
+  color: white;
+}
+
+/* Botón secundario (contorno) */
+.btn-outline {
+  background-color: transparent;
+  color: #6a4c93;
+  border: 2px solid #d4c5f9;
+}
+
+.btn-outline:hover {
+  background-color: #6a4c93;
+  color: white;
+  border-color: #6a4c93;
+}
+
+/* === ESTILOS PARA NOTIFICACIONES === */
+.notifications-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.notification-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  background-color: #eef2ff;
+  border-left: 5px solid #6a4c93;
+  border-radius: 6px;
+}
+
+.notification-icon {
+  font-size: 20px;
+}
+
+.notification-item p {
+  margin: 0;
+  color: #333;
+}
+
+/* === ANIMACIÓN PARA ALERTAS === */
+@keyframes fadeInSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* === ESTILOS PARA ALERTAS PERSONALIZADAS === */
+.notification-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.custom-alert {
+  padding: 15px 20px;
+  border-radius: 8px;
+  color: white;
+  font-weight: 500;
+  min-width: 300px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-left: 5px solid;
+  animation: fadeInSlideDown 0.5s ease-out forwards;
+}
+
+.custom-alert.alert-success {
+  background-color: #4caf50;
+  border-color: #388e3c;
+}
+
+.custom-alert.alert-error {
+  background-color: #f44336;
+  border-color: #d32f2f;
+}
+
+.custom-alert::before {
+  font-weight: bold;
+  font-size: 20px;
+  content: '✓';
+}
+
+.custom-alert.alert-error::before {
+  content: '✖';
+}
+
+/* === ESTILOS PARA DIÁLOGO DE CONFIRMACIÓN === */
+.confirmation-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.confirmation-dialog {
+  background-color: white;
+  padding: 30px 40px;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  max-width: 400px;
+  animation: fadeInSlideDown 0.4s ease-out;
+  width: 90%;
+}
+
+.confirmation-dialog p {
+  margin: 0 0 25px 0;
+  font-size: 16px;
+  color: #333;
+  line-height: 1.5;
+}
+
+.confirmation-dialog-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Botón flotante para menú en móvil */
+.mobile-options-button {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #6a4c93;
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  cursor: pointer;
+  z-index: 999;
+  font-weight: 600;
+  transition: transform 0.2s ease;
+}
+
 
 /* ===== SIDEBAR DE ESTUDIANTES ===== */
 
@@ -234,6 +716,47 @@ main {
     padding: 20px;
   }
 
+  .top-header {
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .panel-container {
+    flex-direction: column;
+  }
+
+  .admin-sections {
+    flex-direction: column;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background-color: #ffffff;
+    padding: 20px 20px 30px 20px;
+    border-top: 1px solid #ddd;
+    transform: translateY(100%);
+    transition: transform 0.3s ease-in-out;
+    z-index: 1000;
+    box-shadow: 0 -4px 15px rgba(0,0,0,0.1);
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+
+  .admin-sections.show-mobile-options {
+    transform: translateY(0);
+  }
+
+  /* Hacemos visible el botón en móvil */
+  .mobile-options-button {
+    display: block;
+  }
+
+  .dropdown-item {
+    flex-grow: 1;
+  }
+
   .students-sidebar {
     width: 100%;
     height: auto;
@@ -241,7 +764,17 @@ main {
     position: relative;
   }
 
-  .admin-sections {
-    max-width: 100%;
+  .list-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .docente-actions {
+    width: 100%;
+  }
+
+  .docente-actions .btn {
+    flex-grow: 1;
   }
 }

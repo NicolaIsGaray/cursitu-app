@@ -121,14 +121,20 @@ export class Administrador {
 
   // Eliminar alumno
   deleteUser(id: number): void {
-    this.userService.deleteUser(id).subscribe({
-      next: (response) => {
-        alert("Usuario eliminado exitosamente.");
-      },
-      error: (err) => {
-        alert("Hubo un error al eliminar al usuario.");
-        console.error(err);
-      }
+    const confirmationMessage = '¿Estás seguro de que deseas borrar este usuario? Esta acción no se puede deshacer.';
+    this.showConfirmationDialog(confirmationMessage, () => {
+      this.userService.deleteUser(id).subscribe({
+        next: (response) => {
+          this.showCustomAlert("Usuario eliminado exitosamente.", 'success');
+          if (this.students) {
+            this.students = this.students.filter(student => student.id !== id);
+          }
+        },
+        error: (err) => {
+          this.showCustomAlert("Hubo un error al eliminar al usuario.", 'error');
+          console.error(err);
+        }
+      });
     });
   }
 
@@ -139,7 +145,11 @@ export class Administrador {
   getAllClassrooms(): void {
     this.classroomService.getClassrooms().subscribe({
       next: (data) => {
-        this.classrooms = data;
+        this.classrooms = data.map(classroom => {
+          classroom.profesores = new Set(classroom.profesores);
+          classroom.alumnos = new Set(classroom.alumnos);
+          return classroom;
+        });
       },
       error: (err) => {
         console.error(err);
@@ -174,8 +184,18 @@ export class Administrador {
     const numberIn = document.getElementById('classroom-number') as HTMLInputElement;
     const classNumber = numberIn.valueAsNumber;
 
+    if (isNaN(classNumber) || classNumber <= 0) {
+      this.showCustomAlert('El número del curso debe ser un número positivo o mayor a 0.', 'error');
+      return;
+    } else {
+      this.hideError('invalid-number-error');
+    }
+
     const yearIn = document.getElementById('classroom-year') as HTMLSelectElement;
     const year: string = yearIn.value;
+
+    const comisionIn = document.getElementById('classroom-comision') as HTMLSelectElement;
+    const comision: string = comisionIn.value;
 
     const studentReferences = this.selectedStudentIds.map(id => ({ id }));
     const profesorReferences = this.selectedTeacherIds.map(id => ({ id }));
@@ -184,22 +204,171 @@ export class Administrador {
       classroom: {
         numeroCurso: classNumber,
         year: year,
-        profesores: profesorReferences
-      },
-      students: studentReferences
+        comision: comision,
+        profesores: profesorReferences,
+        alumnos: studentReferences
+      }
     };
 
     this.sendNewClassroom(payload);
   }
 
+  // Limpia el formulario de creación de cursos
+  clearCreateClassroomForm(): void {
+    const numberIn = document.getElementById('classroom-number') as HTMLInputElement;
+    if (numberIn) numberIn.value = '';
+
+    const yearIn = document.getElementById('classroom-year') as HTMLSelectElement;
+    if (yearIn) yearIn.selectedIndex = 0;
+
+    const comisionIn = document.getElementById('classroom-comision') as HTMLSelectElement;
+    if (comisionIn) comisionIn.selectedIndex = 0;
+
+    const checkboxes = document.querySelectorAll('.form-section input[type="checkbox"]');
+    checkboxes.forEach(cb => (cb as HTMLInputElement).checked = false);
+
+    this.selectedStudentIds = [];
+    this.selectedTeacherIds = [];
+  }
+
   // Agregar curso - Enviar curso
   sendNewClassroom(payload: any): void {
     this.classroomService.addClassroom(payload).subscribe({
-      next: (data) => {
-        alert("Curso creado exitosamente.");
+      next: (data: any) => {
+        this.showCustomAlert("Curso creado exitosamente.", 'success');
+        this.getAllClassrooms();
+        this.clearCreateClassroomForm();
       },
       error: (err) => {
-        alert("Hubo un problema al crear el curso.")
+        this.showCustomAlert("Hubo un problema al crear el curso.", 'error');
+        console.error(err);
+      }
+    });
+  }
+
+  // Eliminar curso - Enviar curso
+  eraseClassroom(id: number): void {
+    const confirmationMessage = '¿Estás seguro de que deseas eliminar este curso? Esta acción no se puede deshacer.';
+    this.showConfirmationDialog(confirmationMessage, () => {
+      this.classroomService.deleteClassroom(id).subscribe({
+        next: (response) => {
+          this.showCustomAlert("Curso eliminado exitosamente.", 'success');
+          this.getAllClassrooms();
+        },
+        error: (err) => {
+          this.showCustomAlert("Hubo un problema al eliminar el curso.", 'error');
+          console.error(err);
+        }
+      });
+    });
+  }
+
+  /**
+   * Verifica si un estudiante ya está inscrito en cualquier curso.
+   * @param studentId
+   * @returns
+   */
+  isStudentInAnyCourse(studentId: number): boolean {
+    if (!this.classrooms) {
+      return false;
+    }
+    for (const classroom of this.classrooms) {
+      if (classroom.alumnos) {
+        for (const alumno of classroom.alumnos) {
+          if (alumno.id === studentId) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  // Quitar un alumno de un curso
+  removeStudentFromClassroom(classroomId: number, studentId: number): void {
+    const confirmationMessage = '¿Estás seguro de que deseas quitar a este alumno del curso?';
+    this.showConfirmationDialog(confirmationMessage, () => {
+      this.classroomService.removeStudent(classroomId, studentId).subscribe({
+        next: (response) => {
+          this.showCustomAlert('Alumno quitado del curso exitosamente.', 'success');
+          this.getAllClassrooms();
+        },
+        error: (err) => {
+          this.showCustomAlert('Error al quitar al alumno.', 'error');
+        }
+      });
+    });
+  }
+
+  // Quitar un profesor de un curso
+  removeTeacherFromClassroom(classroomId: number, teacherId: number): void {
+    const confirmationMessage = '¿Estás seguro de que deseas quitar a este profesor del curso?';
+    this.showConfirmationDialog(confirmationMessage, () => {
+      this.classroomService.removeTeacher(classroomId, teacherId).subscribe({
+        next: (response) => {
+          this.showCustomAlert('Profesor quitado del curso exitosamente.', 'success');
+          this.getAllClassrooms();
+        },
+        error: (err) => {
+          this.showCustomAlert('Error al quitar al profesor.', 'error');
+        }
+      });
+    });
+  }
+
+  // Agregar un alumno a un curso existente
+  addStudentToClassroom(classroomIdStr: string, studentIdStr: string): void {
+    const classroomId = parseInt(classroomIdStr, 10);
+    const studentId = parseInt(studentIdStr, 10);
+
+    if (isNaN(classroomId) || isNaN(studentId)) {
+      this.showCustomAlert('Por favor, seleccione un curso y un alumno válidos.', 'error');
+      return;
+    }
+
+    this.classroomService.addStudentToClassroom(classroomId, studentId).subscribe({
+      next: (response) => {
+        this.showCustomAlert('Alumno agregado al curso exitosamente.', 'success');
+
+        // Actualizar el estado local
+        const classroom = this.classrooms?.find(c => c.id === classroomId);
+        const student = this.students?.find(s => s.id === studentId);
+
+        if (classroom && student) {
+          classroom.alumnos.add(student);
+        }
+      },
+      error: (err) => {
+        this.showCustomAlert('Error al agregar el alumno al curso.', 'error');
+        console.error(err);
+      }
+    });
+  }
+
+  // Agregar un profesor a un curso existente
+  addTeacherToClassroom(classroomIdStr: string, teacherIdStr: string): void {
+    const classroomId = parseInt(classroomIdStr, 10);
+    const teacherId = parseInt(teacherIdStr, 10);
+
+    if (isNaN(classroomId) || isNaN(teacherId)) {
+      this.showCustomAlert('Por favor, seleccione un curso y un profesor válidos.', 'error');
+      return;
+    }
+
+    this.classroomService.addTeacherToClassroom(classroomId, teacherId).subscribe({
+      next: (response) => {
+        this.showCustomAlert('Profesor agregado al curso exitosamente.', 'success');
+
+        // Actualizar el estado local
+        const classroom = this.classrooms?.find(c => c.id === classroomId);
+        const teacher = this.teachers?.find(t => t.id === teacherId);
+
+        if (classroom && teacher) {
+          classroom.profesores.add(teacher);
+        }
+      },
+      error: (err) => {
+        this.showCustomAlert('Error al agregar el profesor al curso.', 'error');
         console.error(err);
       }
     });
@@ -229,6 +398,9 @@ export class Administrador {
     const nameInput = document.getElementById("nombre-materia") as HTMLInputElement;
     const subjectName = nameInput.value;
 
+    const colorInput = document.getElementById("materia-color") as HTMLInputElement;
+    const subjectColor = colorInput.value;
+
     if (subjectName == '') {
       this.showError('blankName');
     } else {
@@ -236,6 +408,7 @@ export class Administrador {
     }
 
     this.subjectToSend.nombre = subjectName;
+    this.subjectToSend.color = subjectColor;
 
     this.sendNewSubject(this.subjectToSend);
   }
@@ -244,11 +417,11 @@ export class Administrador {
   sendNewSubject(subject: Subjects): void {
     this.subjectService.addSubject(subject).subscribe({
       next: (result) => {
-        alert("Materia agregada exitosamente.")
-        window.location.reload();
+        this.showCustomAlert("Materia agregada exitosamente.", 'success');
+        this.getSubjects();
       },
       error: (err) => {
-        console.error(err);
+        this.showCustomAlert("Hubo un error al agregar la materia.", 'error');
 
       }
     });
@@ -269,16 +442,20 @@ export class Administrador {
 
   // Eliminar una materia - Enviar objeto
   eraseSubject(id: number): void {
-    this.subjectService.deleteSubject(id).subscribe({
-      next: (response) => {
-        alert("Materia eliminada exitosamente.");
-        window.location.reload();
-      },
-      error: (err) => {
-        alert("Parece que hubo un error...");
-        console.error(err);
-
-      }
+    const confirmationMessage = '¿Estás seguro de que deseas borrar esta materia?';
+    this.showConfirmationDialog(confirmationMessage, () => {
+      this.subjectService.deleteSubject(id).subscribe({
+        next: (response) => {
+          this.showCustomAlert("Materia eliminada exitosamente.", 'success');
+          if (this.subjects) {
+            this.subjects = this.subjects.filter(subject => subject.id !== id);
+          }
+        },
+        error: (err) => {
+          this.showCustomAlert("Parece que hubo un error al eliminar la materia.", 'error');
+          console.error(err);
+        }
+      });
     });
   }
 
@@ -310,33 +487,31 @@ export class Administrador {
 
   // Asignar materia - Obtención de datos
   asignarMateria(profesorId: number, materiaIdStr: string) {
-    
+
     if (!profesorId || !materiaIdStr) {
-        console.error('Debe seleccionar un profesor y una materia.');
-        return;
+      console.error('Debe seleccionar un profesor y una materia.');
+      return;
     }
-    
+
     const materiaId = Number(materiaIdStr);
 
     const payload = {
-        profesorId: profesorId,
-        materiaId: materiaId
+      profesorId: profesorId,
+      materiaId: materiaId
     };
 
-    console.log('Payload a enviar:', payload);
-    
     this.userService.assignSubjectToTeacher(payload).subscribe({
       next: (response) => {
-        alert("Materia asignada correctamente.");
+        this.showCustomAlert("Materia asignada correctamente.", 'success');
       },
       error: (err) => {
-        alert("Hubo un error al asignar la materia.");
+        this.showCustomAlert("Hubo un error al asignar la materia.", 'error');
         console.error(err);
-        
+
       }
     }
     );
-}
+  }
 
   // Lista de Solicitudes
   solitudes?: User[];
@@ -361,37 +536,122 @@ export class Administrador {
 
   // Confirmar solicitud de rol
   confirmRoleRequest(id: number) {
-    this.userService.confirmTeacherRequest(id).subscribe({
-      next: (response) => {
-        alert("Rol de PROFESOR otorgado.");
-      },
-      error: (err) => {
-        alert("Hubo un error al autorizar el rol.");
-        console.error(err);
-        
-      }
+    const confirmationMessage = '¿Estás seguro de que deseas confirmar a este usuario como docente?';
+    this.showConfirmationDialog(confirmationMessage, () => {
+      this.userService.confirmTeacherRequest(id).subscribe({
+        next: (response) => {
+          this.showCustomAlert("Rol de PROFESOR otorgado.", 'success');
+          if (this.solitudes) {
+            this.solitudes = this.solitudes.filter(solitude => solitude.id !== id);
+          }
+          this.getOnlyTeachers();
+          this.getOnlyStudents();
+        },
+        error: (err) => {
+          this.showCustomAlert("Hubo un error al autorizar el rol.", 'error');
+          console.error(err);
+        }
+      });
     });
   }
 
   // Rechazar solicitud de rol
   denyRoleRequest(id: number) {
-    this.userService.denyTeacherRequest(id).subscribe({
-      next: (response) => {
-        alert("Rol de PROFESOR denegado.");
-      },
-      error: (err) => {
-        alert("Hubo un error al denegar el rol.");
-        console.error(err);
-        
-      }
+    const confirmationMessage = '¿Estás seguro de que deseas denegar esta solicitud?';
+    this.showConfirmationDialog(confirmationMessage, () => {
+      this.userService.denyTeacherRequest(id).subscribe({
+        next: (response) => {
+          this.showCustomAlert("Rol de PROFESOR denegado.", 'success');
+          if (this.solitudes) {
+            this.solitudes = this.solitudes.filter(solitude => solitude.id !== id);
+          }
+        },
+        error: (err) => {
+          this.showCustomAlert("Hubo un error al denegar el rol.", 'error');
+          console.error(err);
+        }
+      });
     });
+  }
+
+  // Propiedades para manejar el estado de los paneles
+  activePanel: string | null = null;
+  activeComision: 'A' | 'B' | null = 'A';
+
+  // Propiedad para controlar la visibilidad del menú de opciones en móvil
+  mobileOptionsVisible = false;
+
+  // Alterna la visibilidad del menú de opciones en móvil
+  toggleMobileOptions(): void {
+    this.mobileOptionsVisible = !this.mobileOptionsVisible;
+  }
+
+  // Propiedades para el diálogo de confirmación
+  confirmationDialog = { visible: false, message: '', onConfirm: () => { } };
+
+  // Propiedades para notificaciones personalizadas
+  notifications: { message: string, type: 'success' | 'error' }[] = [];
+
+  /**
+   * Muestra una notificación personalizada.
+   * @param message
+   * @param type
+   */
+  showCustomAlert(message: string, type: 'success' | 'error') {
+    this.notifications.push({ message, type });
+    setTimeout(() => {
+      this.notifications.shift();
+    }, 5000);
+  }
+
+  /**
+   * Muestra un diálogo de confirmación personalizado.
+   * @param message
+   * @param onConfirmCallback
+   */
+  showConfirmationDialog(message: string, onConfirmCallback: () => void) {
+    this.confirmationDialog.message = message;
+    this.confirmationDialog.onConfirm = onConfirmCallback;
+    this.confirmationDialog.visible = true;
+  }
+
+  /**
+   * Ejecuta la acción de confirmación y cierra el diálogo.
+   */
+  onConfirmDialog() {
+    if (this.confirmationDialog.onConfirm) {
+      this.confirmationDialog.onConfirm();
+    }
+    this.hideConfirmationDialog();
+  }
+
+  /**
+   * Cierra el diálogo de confirmación sin ejecutar la acción.
+   */
+  hideConfirmationDialog() {
+    this.confirmationDialog = { visible: false, message: '', onConfirm: () => { } };
   }
 
   // Manejar click en dropdown
   onDropdownClick(section: string) {
-    const itemSelected = document.getElementById(section) as HTMLElement;
+    if (this.activePanel === section) {
+      this.activePanel = null;
+    } else {
+      this.activePanel = section;
+    }
+    this.mobileOptionsVisible = false;
+  }
 
-    itemSelected.classList.toggle("showPanel");
+  /**
+   * Alterna la visibilidad de las comisiones.
+   * @param comision 'A' o 'B'
+   */
+  toggleComision(comision: 'A' | 'B') {
+    if (this.activeComision === comision) {
+      this.activeComision = null;
+    } else {
+      this.activeComision = comision;
+    }
   }
 
   // Navegar al home
@@ -400,6 +660,8 @@ export class Administrador {
   }
 
   ngOnInit(): void {
+    this.onDropdownClick('cursos')
+
     this.currentUser = this.authService.getCurrentUser();
 
     this.obtainDNIFromAuth();

@@ -53,7 +53,13 @@ export class UserService {
 
   editUser(id: number, user: User) {
     const url = `${this.apiUrl.buildUrl(`/editar-usuario/${id}`)}`;
-    return this.httpClient.put(url, user);
+    const token = this.authService.getToken();
+
+    return this.httpClient.put(url, user, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
   }
 
   deleteUser(id: number): Observable<Object> {

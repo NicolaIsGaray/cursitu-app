@@ -1,9 +1,15 @@
 <!-- Vista de Administrador -   -->
+
+<!-- Contenedor para las notificaciones personalizadas -->
+<div class="notification-container">
+  <div *ngFor="let notification of notifications" class="custom-alert" [ngClass]="'alert-' + notification.type">
+    {{ notification.message }}
+  </div>
+</div>
 <main>
   <div class="main-content">
     <!-- Header -->
     <div class="top-header">
-      <h1>¡BIENVENIDO/A {{user.nombre}}!</h1>
       <div class="user-profile">
         <div class="user-icon" (click)="goToHome()">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -14,11 +20,13 @@
           <span class="status-dot active"></span>
         </div>
       </div>
+      <h1>¡BIENVENIDO/A {{user.nombre}}!</h1>
+      <button class="btn btn-outline" (click)="goToHome()">Volver al Inicio</button>
     </div>
 
     <div class="panel-container">
       <!-- Lista de dropdowns del admin -->
-      <div class="admin-sections">
+      <div class="admin-sections" [class.show-mobile-options]="mobileOptionsVisible">
         <!-- Cursos -->
         <div class="dropdown-item" (click)="onDropdownClick('cursos')">
           <span>Cursos</span>
@@ -53,189 +61,320 @@
       <!-- Panel de Administración -->
       <div class="panel-section">
         <!-- Cursos -->
-        <div class="panel-item" id="cursos">
+        <div class="panel-item" id="cursos" [class.showPanel]="activePanel === 'cursos'">
           <div class="cursos-panel">
-            <h3>Cursos</h3>
-            <form method="post">
-              <label for="classroom-number">Número del curso:</label>
-              <input type="number" name="classroom-number" id="classroom-number">
-              <label for="classroom-year">Año que cursa:</label>
-              <select name="classroom-year" id="classroom-year">
-                <option value="2026">2026</option>
-                <option value="2027">2027</option>
-                <option value="2028">2028</option>
-                <option value="2029">2029</option>
-                <option value="2030">2030</option>
-                <option value="2031">2031</option>
-                <option value="2032">2032</option>
-              </select>
-              <label for="student-list">Seleccione a los alumnos que incorporarán este curso:</label>
-              <ul>
-                <li *ngFor="let student of students">
-                  <label>
-                    {{student.nombre}}
-                    <input type="checkbox" (change)="toggleSelection(student.id, $event, selectedStudentIds)">
-                  </label>
-                </li>
-              </ul>
-              <label for="teacher-list">Seleccione los profesores correspondientes al curso:</label>
-              <ul>
-                <li *ngFor="let teacher of teachers">
-                  <label>
-                    {{teacher.nombre}}
-                    <input type="checkbox" (change)="toggleSelection(teacher.id, $event, selectedTeacherIds)">
-                  </label>
-                </li>
-              </ul>
-              <button type="button" (click)="createClassroom()">Crear Curso</button>
-            </form>
+            <h3>Gestión de Cursos</h3>
+
+            <!-- Formulario para crear un nuevo curso -->
+            <div class="form-section">
+              <h4>Crear Nuevo Curso</h4>
+              <form method="post">
+                <div class="form-group">
+                  <label for="classroom-number">Número del curso:</label>
+                  <input type="number" name="classroom-number" id="classroom-number" class="form-control">
+                </div>
+                <div class="form-group">
+                  <label for="classroom-year">Año que cursa:</label>
+                  <select name="classroom-year" id="classroom-year" class="form-control">
+                    <option value="2026">2026</option>
+                    <option value="2027">2027</option>
+                    <option value="2028">2028</option>
+                    <option value="2029">2029</option>
+                    <option value="2030">2030</option>
+                    <option value="2031">2031</option>
+                    <option value="2032">2032</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="classroom-comision">Comisión:</label>
+                  <select name="classroom-comision" id="classroom-comision" class="form-control">
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Seleccione los alumnos para este curso:</label>
+                  <ul class="checkbox-list">
+                    <li *ngFor="let student of students" [class.disabled]="isStudentInAnyCourse(student.id)">
+                      <label>
+                        <input type="checkbox" (change)="toggleSelection(student.id, $event, selectedStudentIds)"
+                               [disabled]="isStudentInAnyCourse(student.id)">
+                        {{student.nombre}}
+                      </label>
+                    </li>
+                  </ul>
+                </div>
+                <div class="form-group">
+                  <label>Seleccione los profesores para este curso:</label>
+                  <ul class="checkbox-list">
+                    <li *ngFor="let teacher of teachers">
+                      <label>
+                        <input type="checkbox" (change)="toggleSelection(teacher.id, $event, selectedTeacherIds)">
+                        {{teacher.nombre}}
+                      </label>
+                    </li>
+                  </ul>
+                </div>
+                <button type="button" class="btn btn-primary" (click)="createClassroom()">Crear Curso</button>
+              </form>
+            </div>
+
             <!-- Botones para elegir que comisión listar/mostrar -->
-            <button type="button">Comisión A</button>
-            <button type="button">Comisión B</button>
-            <div id="com-A">
-              <span>Comisión A</span>
-              <ul *ngFor="let class of classrooms">
-                <li *ngIf="class.alumnos">
-                  <div class="alumno-item">
-                    <span>{{class.alumnos}}</span>
-                    <div class="actions-container">
-                      <button type="button">Quitar</button>
-                    </div>
-                  </div>
-                </li>
-              </ul>
+            <div class="btn-toggle-group">
+              <button type="button" class="btn btn-toggle" [class.active]="activeComision === 'A'" (click)="toggleComision('A')">Comisión A</button>
+              <button type="button" class="btn btn-toggle" [class.active]="activeComision === 'B'" (click)="toggleComision('B')">Comisión B</button>
             </div>
-            <div id="com-B">
-              <span>Comisión B</span>
-              <ul *ngFor="let class of classrooms">
-                <li *ngIf="class.alumnos">
-                  <div class="alumno-item">
-                    <span>{{class.alumnos}}</span>
-                    <div class="actions-container">
-                      <button type="button">Quitar</button>
-                    </div>
+            <div id="com-A" [class.showComision]="activeComision === 'A'">
+              <div class="course-list">
+                <ng-container *ngFor="let class of classrooms">
+                  <div class="course-card" *ngIf="class.comision === 'A'">
+                    <span class="delete-course-icon" (click)="eraseClassroom(class.id)">X</span>
+                    <h5>Curso {{class.numeroCurso}} - Año {{class.year}}</h5>
+                    <h6>Profesores</h6>
+                    <ul *ngIf="class.profesores && class.profesores.size > 0; else noProfesores">
+                      <li *ngFor="let profesor of class.profesores" class="list-member-item">
+                        <span>{{profesor.nombre}}</span>
+                        <button type="button" class="btn btn-danger btn-sm"
+                          (click)="removeTeacherFromClassroom(class.id, profesor.id)">Quitar</button>
+                      </li>
+                    </ul>
+                    <ng-template #noProfesores>
+                      <p class="empty-list-message">No hay profesores en este curso.</p>
+                    </ng-template>
+
+                    <h6>Alumnos</h6>
+                    <ul *ngIf="class.alumnos; else noAlumnos">
+                      <li *ngFor="let alumno of class.alumnos" class="list-member-item">
+                        <span>{{alumno.nombre}}</span>
+                        <button type="button" class="btn btn-danger btn-sm" (click)="removeStudentFromClassroom(class.id, alumno.id)">Quitar</button>
+                      </li>
+                    </ul>
+                    <ng-template #noAlumnos>
+                      <p class="empty-list-message">No hay alumnos en este curso.</p>
+                    </ng-template>
                   </div>
-                </li>
-              </ul>
+                </ng-container>
+              </div>
             </div>
-            <form method="post">
-              <label for="student">¿A quien le gustaria agregar?</label>
-              <select name="student" id="student-toadd">
-                <option disabled selected>Elija un alumno</option>
-                <option value="{{student.dni}}" *ngFor="let student of students">{{student.nombre}}</option>
-              </select>
-              <label for="comission">¿En que comisión?</label>
-              <select name="comission" id="comission">
-                <option disabled selected>Elija una comisión</option>
-                <option value="A">A</option>
-                <option value="B">B</option>
-              </select>
-              <label for="classroom-number">¿Número de curso?</label>
-              <select name="classroom-number" id="classroom-number">
-                <option disabled selected>Elija un curso</option>
-                <option value="{{classroom.numeroCurso}}" *ngFor="let classroom of classrooms">Curso
-                  {{classroom.numeroCurso}}</option>
-              </select>
-            </form>
-            <button type="button">Agregar Alumno</button>
+            <div id="com-B" [class.showComision]="activeComision === 'B'">
+              <div class="course-list">
+                <ng-container *ngFor="let class of classrooms">
+                  <div class="course-card" *ngIf="class.comision === 'B'">
+                    <span class="delete-course-icon" (click)="eraseClassroom(class.id)">🗑️</span>
+                    <h5>Curso {{class.numeroCurso}}</h5>
+                    <h6>Profesores</h6>
+                    <ul *ngIf="class.profesores && class.profesores.size > 0; else noProfesoresB">
+                      <li *ngFor="let profesor of class.profesores" class="list-member-item">
+                        <span>{{profesor.nombre}}</span>
+                        <button type="button" class="btn btn-danger btn-sm"
+                          (click)="removeTeacherFromClassroom(class.id, profesor.id)">Quitar</button>
+                      </li>
+                    </ul>
+                    <ng-template #noProfesoresB>
+                      <p class="empty-list-message">No hay profesores en este curso.</p>
+                    </ng-template>
+
+                    <h6>Alumnos</h6>
+                    <ul *ngIf="class.alumnos; else noAlumnosB">
+                      <li *ngFor="let alumno of class.alumnos" class="list-member-item">
+                        <span>{{alumno.nombre}}</span>
+                        <button type="button" class="btn btn-danger btn-sm" (click)="removeStudentFromClassroom(class.id, alumno.id)">Quitar</button>
+                      </li>
+                    </ul>
+                    <ng-template #noAlumnosB>
+                      <p class="empty-list-message">No hay alumnos en este curso.</p>
+                    </ng-template>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+
+            <!-- Formulario para agregar un alumno a un curso existente -->
+            <div class="form-section">
+              <h4>Agregar Alumno a Curso Existente</h4>
+              <form method="post">
+                  <div class="form-group">
+                      <label for="student-to-add-select">¿A quién le gustaría agregar?</label>
+                      <select name="student" id="student-to-add-select" class="form-control" #studentToAdd>
+                          <option value="" disabled selected>Elija un alumno</option>
+                          <option *ngFor="let student of students" [value]="student.id" [disabled]="isStudentInAnyCourse(student.id)">
+                              {{student.nombre}}
+                          </option>
+                      </select>
+                  </div>
+                  <div class="form-group">
+                      <label for="classroom-for-student-select">¿A qué curso?</label>
+                      <select name="classroom-number" id="classroom-for-student-select" class="form-control" #classroomForStudent>
+                          <option value="" disabled selected>Elija un curso</option>
+                          <option *ngFor="let class of classrooms" [value]="class.id">
+                              Curso {{class.numeroCurso}} - Comisión {{class.comision}}
+                          </option>
+                      </select>
+                  </div>
+                  <button type="button" class="btn btn-primary" (click)="addStudentToClassroom(classroomForStudent.value, studentToAdd.value)">Agregar Alumno</button>
+              </form>
+            </div>
+
+            <!-- Formulario para agregar un profesor a un curso existente -->
+            <div class="form-section">
+              <h4>Agregar Profesor a Curso Existente</h4>
+              <form method="post">
+                  <div class="form-group">
+                      <label for="teacher-to-add-select">¿Qué profesor desea agregar?</label>
+                      <select id="teacher-to-add-select" class="form-control" #teacherToAdd>
+                          <option value="" disabled selected>Elija un profesor</option>
+                          <option *ngFor="let teacher of teachers" [value]="teacher.id">{{teacher.nombre}}</option>
+                      </select>
+                  </div>
+                  <div class="form-group">
+                      <label for="classroom-for-teacher-select">¿A qué curso?</label>
+                      <select id="classroom-for-teacher-select" class="form-control" #classroomForTeacher>
+                          <option value="" disabled selected>Elija un curso</option>
+                          <option *ngFor="let class of classrooms" [value]="class.id">Curso {{class.numeroCurso}} - Comisión {{class.comision}}</option>
+                      </select>
+                  </div>
+                  <button type="button" class="btn btn-primary" (click)="addTeacherToClassroom(classroomForTeacher.value, teacherToAdd.value)">Agregar Profesor</button>
+              </form>
+            </div>
           </div>
         </div>
 
         <!-- Materias -->
-        <div class="panel-item" id="materias">
-          <div class="materias-panel">
-            <h3>Materias</h3>
-            <form method="post">
-              <label for="nombre-materia">Nombre de la materia: </label>
-              <input type="text" name="nombre-materia" id="nombre-materia">
-            </form>
-            <p class="error-message" id="blankName">El nombre de la materia no puede estar vacío.</p>
-            <button type="button" (click)="getSubjectData()">Agregar Materia</button>
-            <ul *ngFor="let subject of subjects">
-              <li>
-                <div class="materia-item">
-                  <span>{{subject.nombre}}</span>
-                  <div class="actions-container">
-                    <button type="button" (click)="getSubjectID(subject.id)">Quitar</button>
-                  </div>
+        <div class="panel-item" id="materias" [class.showPanel]="activePanel === 'materias'">
+          <div class="cursos-panel">
+            <h3>Gestión de Materias</h3>
+
+            <!-- Formulario para agregar una nueva materia -->
+            <div class="form-section">
+              <h4>Agregar Nueva Materia</h4>
+              <form method="post">
+                <div class="form-group">
+                  <label for="nombre-materia">Nombre de la materia:</label>
+                  <input type="text" name="nombre-materia" id="nombre-materia" class="form-control">
+                  <p class="error-message" id="blankName">El nombre de la materia no puede estar vacío.</p>
                 </div>
-              </li>
-            </ul>
+                <div class="form-group">
+                  <label for="materia-color">Color de la materia:</label>
+                  <input type="color" name="materia-color" id="materia-color" class="form-control" value="#6a4c93">
+                </div>
+                <button type="button" class="btn btn-primary" (click)="getSubjectData()">Agregar Materia</button>
+              </form>
+            </div>
+
+            <!-- Lista de materias existentes -->
+            <div class="list-section">
+              <h4>Materias Existentes</h4>
+              <div class="item-list">
+                <div class="list-item" *ngFor="let subject of subjects">
+                  <span>{{subject.nombre}}</span>
+                  <button type="button" class="btn btn-danger" (click)="getSubjectID(subject.id)">Quitar</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
         <!-- Docentes -->
-        <div class="panel-item" id="docentes">
-          <div class="docentes-panel">
-            <h3>Docentes</h3>
-            <ul *ngFor="let teacher of teachers">
-              <li>
-                <div class="docente-item">
-                  <span id="{{teacher.id}}">{{teacher.nombre}}</span>
-                  <div class="actions-container">
-                    <label for="subject-to-assign-{{teacher.id}}">Asignar materia:</label>
+        <div class="panel-item" id="docentes" [class.showPanel]="activePanel === 'docentes'">
+          <div class="cursos-panel">
+            <h3>Gestión de Docentes</h3>
 
-                    <select name="subject-to-assign" id="subject-to-assign-{{teacher.id}}" #materiaSelect>
-                      <option selected disabled value="">Elija una materia</option>
+            <!-- Lista de docentes existentes -->
+            <div class="list-section">
+              <h4>Docentes Activos</h4>
+              <div class="item-list">
+                <div class="list-item" *ngFor="let teacher of teachers">
+                  <span class="item-name" id="{{teacher.id}}">{{teacher.nombre}}</span>
+                  <div class="actions-container docente-actions">
+                    <select name="subject-to-assign" class="form-control" id="subject-to-assign-{{teacher.id}}" #materiaSelect>
+                      <option selected disabled value="">Asignar materia...</option>
                       <option [value]="subject.id" *ngFor="let subject of subjects">{{subject.nombre}}</option>
                     </select>
-
-                    <button type="button" (click)="asignarMateria(teacher.id, materiaSelect.value)">
+                    <button type="button" class="btn btn-primary" (click)="asignarMateria(teacher.id, materiaSelect.value)">
                       Asignar
                     </button>
-
-                    <button type="button">Dar de baja</button>
+                    <button type="button" class="btn btn-danger">Dar de baja</button>
                   </div>
                 </div>
-              </li>
-            </ul>
+              </div>
+            </div>
           </div>
         </div>
 
         <!-- Estudiantes -->
-        <div class="panel-item" id="estudiantes">
-          <div class="estudiantes-panel">
-            <h3>Estudiantes</h3>
-            <ul *ngFor="let student of students">
-              <li>
-                <div class="estudiante-item">
-                  <span>{{student.nombre}}</span>
-                  <div class="actions-container">
-                    <button type="button"(click)="deleteUser(student.id)" >Borrar</button>
-                  </div>
-                </div>
-              </li>
-            </ul>
+        <div class="panel-item" id="estudiantes" [class.showPanel]="activePanel === 'estudiantes'">
+          <div class="cursos-panel">
+            <h3>Gestión de Estudiantes</h3>
+            <div class="list-section">
+              <h4>Listado de Estudiantes</h4>
+              <div class="table-container">
+                <table class="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Nombre</th>
+                      <th>DNI</th>
+                      <th class="text-right">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let student of students">
+                      <td>{{student.nombre}}</td>
+                      <td>{{student.dni}}</td>
+                      <td class="text-right"><button type="button" class="btn btn-danger" (click)="deleteUser(student.id)">Borrar</button></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
 
         <!-- Solicitudes -->
-        <div class="panel-item" id="solicitudes">
-          <div class="solicitudes-panel">
-            <h3>Solicitudes</h3>
-            <ul *ngFor="let solitude of solitudes">
-              <li>
-                <div class="solicitud-item">
-                  <span>{{solitude.nombre}}</span>
+        <div class="panel-item" id="solicitudes" [class.showPanel]="activePanel === 'solicitudes'">
+          <div class="cursos-panel">
+            <h3>Solicitudes para docente</h3>
+            <div class="list-section">
+              <h4>Pendientes de Aprobación</h4>
+              <div class="item-list">
+                <div class="list-item" *ngFor="let solitude of solitudes">
+                  <span class="item-name">{{solitude.nombre}} - DNI {{solitude.dni}}</span>
                   <div class="actions-container">
-                    <button type="button" (click)="confirmRoleRequest(solitude.id)">Confirmar</button>
-                    <button type="button" (click)="denyRoleRequest(solitude.id)">Denegar</button>
+                    <button type="button" class="btn btn-success" (click)="confirmRoleRequest(solitude.id)">Confirmar</button>
+                    <button type="button" class="btn btn-danger" (click)="denyRoleRequest(solitude.id)">Denegar</button>
                   </div>
                 </div>
-              </li>
-            </ul>
+              </div>
+            </div>
           </div>
         </div>
 
         <!-- Notificaciones -->
-        <div class="panel-item" id="notificaciones">
-          <h3>Notificaciones</h3>
-          <span>"El aula 36 está ocupando actualmente el televisor"</span> <br>
-          <span>"Un alumno no puede ingresar a la aplicación."</span> <br>
-          <span>"La aplicación se pondrá en mantenimiento a partir del 21 de Noviembre a las 11:00hs."</span>
+        <div class="panel-item" id="notificaciones" [class.showPanel]="activePanel === 'notificaciones'">
+          <div class="cursos-panel">
+            <h3>Notificaciones</h3>
+            <div class="notifications-list">
+              <div class="notification-item">
+                <span class="notification-icon">🔔</span>
+                <p>"El aula 36 está ocupando actualmente el televisor"</p>
+              </div>
+              <div class="notification-item">
+                <span class="notification-icon">⚠️</span>
+                <p>"Un alumno no puede ingresar a la aplicación."</p>
+              </div>
+              <div class="notification-item">
+                <span class="notification-icon">🔧</span>
+                <p>"La aplicación se pondrá en mantenimiento a partir del 21 de Noviembre a las 11:00hs."</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- Botón flotante para mostrar opciones en móvil -->
+  <div class="mobile-options-button" (click)="toggleMobileOptions()">
+    <span>☰ Menú</span>
   </div>
 
   <!-- Sidebar de Estudiantes -->
@@ -257,3 +396,14 @@
     </div>
   </div>
 </main>
+
+<!-- Diálogo de Confirmación Personalizado -->
+<div class="confirmation-dialog-overlay" *ngIf="confirmationDialog.visible">
+  <div class="confirmation-dialog">
+    <p>{{ confirmationDialog.message }}</p>
+    <div class="confirmation-dialog-actions">
+      <button class="btn" (click)="hideConfirmationDialog()">Cancelar</button>
+      <button class="btn btn-danger" (click)="onConfirmDialog()">Confirmar</button>
+    </div>
+  </div>
+</div>

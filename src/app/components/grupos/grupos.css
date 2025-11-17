@@ -35,6 +35,31 @@ main {
   margin: 0;
 }
 
+/* Estilo base para botones de acción */
+.btn {
+  padding: 10px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+/* Botón secundario (contorno) */
+.btn-outline {
+  background-color: transparent;
+  color: #6a4c93;
+  border: 2px solid #d4c5f9;
+}
+
+.btn-outline:hover {
+  background-color: #6a4c93;
+  color: white;
+  border-color: #6a4c93;
+}
+
 .user-profile {
   position: relative;
 }
@@ -128,6 +153,12 @@ main {
 
 .subject-card:hover {
   transform: translateY(-2px);
+}
+
+.subject-card.active {
+  transform: translateY(-2px);
+  box-shadow: 0 0 0 3px white, 0 0 0 6px #6a4c93;
+  outline: none;
 }
 
 .subject-header {
@@ -304,20 +335,63 @@ main {
   background: #5a3d7e;
 }
 
-.btn-create {
-  margin-top: 2vh;
+/* === ESTILOS DE FORMULARIO === */
+.form-section {
+  margin-top: 30px;
+  padding: 25px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #fdfdfd;
+}
+
+.form-section h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #555;
+  margin-bottom: 6px;
+}
+
+.form-control {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  width: 100%;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #6a4c93;
+  box-shadow: 0 0 0 2px rgba(106, 76, 147, 0.2);
+}
+
+.btn-primary {
   padding: 10px 20px;
   background: #6a4c93;
   color: white;
   border: none;
   border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
 }
 
-.btn-create:hover {
+.btn-primary:hover {
   background: #5a3d7e;
 }
 

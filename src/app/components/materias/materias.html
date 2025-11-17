@@ -3,7 +3,8 @@
   <div class="main-content">
     <!-- Header -->
     <div class="top-header">
-      <h1>¡BIENVENIDO ROL!</h1>
+      <button class="btn btn-outline" (click)="goToHome()">Volver al Inicio</button>
+      <h1>¡BIENVENIDO/A {{user.nombre.toUpperCase()}}!</h1>
       <div class="user-profile">
         <div class="user-icon" (click)="goToHome()">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -17,28 +18,65 @@
 
     <!-- Dropdown principal "Materias" -->
     <div class="subjects-dropdown">
-      <div class="dropdown-header" (click)="toggleSubjectsDropdown()">
+      <div class="dropdown-header">
         <span>Materias</span>
-        <svg class="dropdown-arrow" [class.expanded]="isSubjectsExpanded" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <polyline points="6 9 12 15 18 9"></polyline>
         </svg>
       </div>
 
       <!-- Contenido cuando está expandido -->
-      <div class="subjects-content" *ngIf="isSubjectsExpanded">
+      <div class="subjects-content">
         <!-- Grid de tarjetas de materias -->
         <div class="subjects-grid">
-          <div class="subject-card" *ngFor="let subject of subjects" [class]="'color-' + subject.color" (click)="onSubjectClick(subject)">
+          <div class="subject-card" *ngFor="let subject of subjects" [style.background-color]="subject.color" (click)="onSubjectClick(subject)">
             <div class="subject-placeholder"></div>
             <div class="subject-info">
-              <h3>{{ subject.name }}</h3>
-              <p>Año: {{ subject.year }}</p>
-              <p>Comisión: {{ subject.commission }}</p>
+              <h3>{{ subject.nombre }}</h3>
             </div>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Contenedor de detalles de la materia seleccionada -->
+    <div class="subject-details-container" *ngIf="selectedSubject && subjectDetails">
+      <!-- Título y Descripción -->
+      <div class="details-header">
+        <h2>{{ selectedSubject.nombre }}</h2>
+        <p>{{ subjectDetails.descripcion }}</p>
+      </div>
+
+      <!-- Programa Analítico -->
+      <div class="program-card">
+        <h4>Programa Analítico</h4>
+        <pre>{{ subjectDetails.programaAnalitico }}</pre>
+      </div>
+
+      <!-- Módulos/Clases -->
+      <div class="modules-section">
+        <h4>Clases</h4>
+        <div class="modules-list">
+          <div class="module-item" *ngFor="let clase of subjectDetails.clases">
+            <div class="dropdown-header" (click)="toggleClase(clase)">
+              <span>{{ clase.nombre }}</span>
+              <svg class="dropdown-arrow" [class.expanded]="clase.expanded" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+            <div class="module-content" *ngIf="clase.expanded">
+              <p>Contenido de la {{ clase.nombre }}...</p>
+              <ul>
+                <li>Material de lectura</li>
+                <li>Video de la clase</li>
+                <li>Actividades</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- Sidebar de Estudiantes -->
@@ -52,8 +90,8 @@
 
     <div class="students-list">
       <div class="student-item" *ngFor="let student of students">
-        <div class="student-avatar">{{ student.initial }}</div>
-        <span class="student-name">{{ student.name }}</span>
+        <div class="student-avatar">{{ student.nombre.substring(0, 1)}}</div>
+        <span class="student-name">{{ student.nombre }}</span>
         <span class="status-indicator" [class.active]="student.isActive"></span>
       </div>
     </div>

@@ -6,4 +6,5 @@ export class Group {
     limite!: number;
     miembros!: Set<User>;
     pendientes!: Set<User>;
+    comision!: string;
 }

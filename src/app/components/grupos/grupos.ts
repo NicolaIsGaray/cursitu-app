@@ -18,6 +18,14 @@ interface GroupMember {
   isSelected: boolean;
 }
 
+interface GroupCreateDTO {
+    nombre: string;
+    limite: number;
+    comision: string;
+    miembros: Set<User>; 
+    pendientes: Set<User>;
+}
+
 @Component({
   selector: 'app-grupos',
   imports: [CommonModule, FormsModule],
@@ -136,6 +144,7 @@ export class Grupos {
     this.groupService.getGroups().subscribe({
       next: (data) => {
         this.groups = data;
+        this.filterGroupsBySubject();
       },
       error: (err) => {
         console.error(err);
@@ -143,14 +152,49 @@ export class Grupos {
     });
   }
 
-  // Crear grupo - Obtener datos
+  // Crear grupo - Enviar objeto
   getGroupForm(): void {
+    const nombreIn = document.getElementById('group-name') as HTMLInputElement;
+    const nombre = nombreIn.value.trim();
 
+    if (!nombre) {
+      alert("El nombre del grupo no puede estar vacío.");
+      return;
+    }
+
+    const limiteIn = document.getElementById('group-limit') as HTMLInputElement;
+    const limite = Number(limiteIn.value);
+
+    if (isNaN(limite) || limite < 1 || limite > 6) {
+      alert("El límite de integrantes debe ser un número entero entre 1 y 6.");
+      return;
+    }
+    
+    const miembrosSet = new Set<User>();
+    miembrosSet.add(this.user);
+
+    const newGroup: GroupCreateDTO = {
+      nombre: nombre,
+      limite: limite,
+      comision: this.user.comision,
+      miembros: miembrosSet,
+      pendientes: new Set<User>()
+    }
+
+    this.sendNewGroup(newGroup);
   }
 
   // Crear grupo - Enviar objeto
-  sendNewGroup(): void {
-
+  sendNewGroup(group: any): void {
+    this.groupService.createGroup(group).subscribe({
+      next: (response) => {
+        alert("Grupo creado exitosamente.");
+      },
+      error: (err) => {
+        alert("Hubo un error al crear el grupo.");
+        console.error(err);
+      }
+    });
   }
 
   // Dropdown de "Grupos" está expandido por defecto
@@ -159,11 +203,34 @@ export class Grupos {
   // Nombre del alumno a invitar
   newMemberName = '';
 
+  // Propiedades para filtrar grupos por materia
+  selectedSubjectId: number | null = null;
+  filteredGroups: Group[] = [];
+
   // Toggle de cada materia
   toggleSubject(subject: Subjects) {
-    alert("Se ejecutó tu puta madre: " + subject)
+    // Si se hace clic en la misma materia, se deselecciona.
+    if (this.selectedSubjectId === subject.id) {
+      this.selectedSubjectId = null;
+    } else {
+      this.selectedSubjectId = subject.id;
+    }
+    this.filterGroupsBySubject();
   }
 
+  // Filtra los grupos basándose en la materia seleccionada
+  filterGroupsBySubject(): void {
+    if (!this.groups) {
+      this.filteredGroups = [];
+      return;
+    }
+
+    if (this.selectedSubjectId === null) {
+      this.filteredGroups = this.groups;
+      return;
+    }
+    this.filteredGroups = this.groups.filter(g => g.comision === this.user.comision);
+  }
   // Invitar alumno al grupo
   inviteToGroup(group: Group) {
     if (this.newMemberName.trim()) {
@@ -197,6 +264,7 @@ export class Grupos {
     this.getUserData();
 
     this.getSubjects();
+    this.getAllGroups();
   }
 
   // Navegar al home/dashboard

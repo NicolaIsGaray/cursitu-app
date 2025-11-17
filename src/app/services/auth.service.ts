@@ -60,9 +60,15 @@ export class AuthService {
   private decodeAndSetUser(token: string): void {
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
+      // Aseguramos que los roles se procesen siempre como un array de strings en mayúsculas.
+      const rolesArray = (payload.roles || [])
+        .map((role: any) => (typeof role === 'object' && role.role ? role.role : role))
+        .filter((role: any) => typeof role === 'string')
+        .map((role: string) => role.toUpperCase());
+
       const user: User = {
         username: payload.sub,
-        roles: payload.roles || []
+        roles: rolesArray
       };
       this.currentUserSubject.next(user);
     } catch (error) {

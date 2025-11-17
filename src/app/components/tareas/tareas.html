@@ -3,7 +3,8 @@
   <div class="main-content">
     <!-- Header -->
     <div class="top-header">
-      <h1>¡BIENVENIDO ESTUDIANTE!</h1>
+      <button class="btn btn-outline" (click)="goToHome()">Volver al Inicio</button>
+      <h1>¡BIENVENIDO/A {{user.nombre.toUpperCase()}}!</h1>
       <div class="user-profile">
         <div class="user-icon" (click)="goToHome()">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -17,25 +18,27 @@
 
     <!-- Dropdown principal "Tareas" -->
     <div class="tasks-dropdown">
-      <div class="dropdown-header" (click)="toggleTasksDropdown()">
+      <div class="dropdown-header">
         <span>Tareas</span>
-        <svg class="dropdown-arrow" [class.expanded]="isTasksExpanded" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <polyline points="6 9 12 15 18 9"></polyline>
         </svg>
       </div>
 
       <!-- Contenido cuando está expandido -->
-      <div class="tasks-content" *ngIf="isTasksExpanded">
+      <div class="tasks-content">
         <!-- Tarjetas de materias -->
         <div class="subjects-grid">
-          <div class="subject-card" *ngFor="let subject of subjects" [class]="'color-' + subject.color">
-            <div class="subject-header" (click)="toggleSubject(subject)">
+          <div
+            class="subject-card"
+            *ngFor="let subject of subjects"
+            [style.background-color]="subject.color"
+            [class.active]="subject.id === selectedSubjectId" (click)="onSubjectClick(subject)">
+            <div class="subject-header">
               <div class="subject-info">
-                <h3>{{ subject.name }}</h3>
-                <p>Año: {{ subject.year }}</p>
-                <p>Comisión: {{ subject.commission }}</p>
+                <h3>{{ subject.nombre }}</h3>
               </div>
-              <svg class="subject-arrow" [class.expanded]="subject.isExpanded" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg class="subject-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polyline points="6 9 12 15 18 9"></polyline>
               </svg>
             </div>
@@ -43,55 +46,59 @@
         </div>
 
         <!-- Lista de trabajos prácticos/tareas -->
-        <div class="assignments-list">
-          <div class="assignment-item" *ngFor="let assignment of assignments">
-            <!-- Ícono PDF/Excel -->
-            <div class="file-icon" [class.pdf]="assignment.fileType === 'pdf'" [class.excel]="assignment.fileType === 'excel'">
-              <span *ngIf="assignment.fileType === 'pdf'">PDF</span>
-              <span *ngIf="assignment.fileType === 'excel'">XLS</span>
-            </div>
-
-            <!-- Info de la tarea -->
-            <div class="assignment-info">
-              <h4>{{ assignment.title }}</h4>
-              <p>Fecha entrega: {{ assignment.dueDate }}</p>
-            </div>
-
-            <!-- Estado -->
-            <div class="assignment-status" [class]="assignment.status">
-              <span>Estado:</span>
-              <span class="status-badge">{{ assignment.status.toUpperCase() }}</span>
-            </div>
-
-            <!-- Botón de acción  el estado -->
-            <div class="assignment-action">
-              <!-- Si está PENDIENTE: botón para AGREGAR ENTREGA -->
-              <div class="upload-section" *ngIf="assignment.status === 'pendiente'">
-                <button class="btn-upload" (click)="fileInput.click()">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="6 9 12 3 18 9"></polyline>
-                    <line x1="12" y1="3" x2="12" y2="15"></line>
-                  </svg>
-                  AGREGAR ENTREGA
-                </button>
-                <input #fileInput type="file" (change)="onFileSelected($event)" accept=".pdf,.xlsx,.xls" style="display: none">
-                <div class="file-info">
-                  <p>SUBIR ARCHIVO</p>
-                  <p class="file-limit">Capacidad Máxima: 10mb</p>
-                  <p class="file-formats">Formatos permitidos: PDF, XLSX</p>
+        <div class="assignments-container">
+          <div class="assignments-list" *ngIf="selectedSubjectId; else noSubjectSelected">
+            <div class="assignment-item" *ngFor="let assignment of displayedAssignments" [class]="getNormalizedStatus(assignment.status)">
+              <!-- Columna Izquierda: Icono e Info -->
+              <div class="assignment-left">
+                <div class="file-icon" [class.pdf]="assignment.fileType === 'pdf'" [class.excel]="assignment.fileType === 'excel'">
+                  <span>{{ assignment.fileType.toUpperCase() }}</span>
+                </div>
+                <div class="assignment-info">
+                  <h4>{{ assignment.title }}</h4>
+                  <p>Fecha de entrega: {{ assignment.dueDate }}</p>
                 </div>
               </div>
 
-              <!-- Si está ENTREGADO: botón para QUITAR ENTREGA -->
-              <button class="btn-remove" *ngIf="assignment.status === 'entregado'" (click)="quitarEntrega(assignment)">
-                QUITAR ENTREGA
-              </button>
+              <!-- Columna Derecha: Estado y Acción -->
+              <div class="assignment-right">
+                <div class="assignment-status">
+                  <span>Estado</span>
+                  <span class="status-badge">{{ assignment.status }}</span>
+                </div>
+
+                <div class="assignment-action">
+                  <!-- Si está PENDIENTE: botón para AGREGAR ENTREGA -->
+                  <div class="upload-section" *ngIf="assignment.status === 'Pendiente'">
+                    <button class="btn-upload" (click)="fileInput.click()">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                      </svg>
+                      <span>Subir Entrega</span>
+                    </button>
+                    <input #fileInput type="file" (change)="onFileSelected($event)" accept=".pdf,.xlsx,.xls" style="display: none">
+                  </div>
+
+                  <!-- Si está ENTREGADO: botón para QUITAR ENTREGA -->
+                  <button class="btn-remove" *ngIf="assignment.status === 'Entregado'" (click)="quitarEntrega(assignment)">
+                    Quitar Entrega
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
+        <!-- Mensaje cuando no hay materia seleccionada -->
+        <ng-template #noSubjectSelected>
+          <div class="no-selection-message">
+            <p>Selecciona una materia para ver las tareas correspondientes.</p>
+          </div>
+        </ng-template>
+        </div>
       </div>
     </div>
-  </div>
 
   <!-- Sidebar de Estudiantes -->
   <div class="students-sidebar">
@@ -104,9 +111,22 @@
 
     <div class="students-list">
       <div class="student-item" *ngFor="let student of students">
-        <div class="student-avatar">{{ student.initial }}</div>
-        <span class="student-name">{{ student.name }}</span>
+        <div class="student-avatar">{{ student.nombre.substring(0, 1) }}</div>
+        <span class="student-name">{{ student.nombre }}</span>
         <span class="status-indicator" [class.active]="student.isActive"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Diálogo de Confirmación Personalizado -->
+  <div class="confirmation-dialog-overlay" *ngIf="confirmationDialog.visible">
+    <div class="confirmation-dialog">
+      <p>{{ confirmationDialog.message }}</p>
+      <div class="confirmation-dialog-actions">
+        <!-- El botón de cancelar ahora permite subir el archivo sin comprimir -->
+        <button class="btn btn-outline" (click)="cancelAction()">Subir sin comprimir</button>
+        <!-- El botón de confirmar simula la acción de comprimir -->
+        <button class="btn btn-primary" (click)="confirmAction()">Comprimir</button>
       </div>
     </div>
   </div>

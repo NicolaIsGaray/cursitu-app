@@ -39,7 +39,7 @@ export class ClassroomService {
     const url = `${this.apiUrl.buildUrl(`/editar-curso/${id}`)}`;
     const token = this.authService.getToken();
 
-    return this.httpClient.put(url, classroom ,{
+    return this.httpClient.put(url, classroom, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -53,7 +53,56 @@ export class ClassroomService {
     return this.httpClient.delete(url, {
       headers: {
         'Authorization': `Bearer ${token}`
+      },
+      responseType: 'text'
+    });
+  }
+
+  removeStudent(classroomId: number, studentId: number): Observable<Object> {
+    const url = `${this.apiUrl.buildUrl(`/cursos/${classroomId}/eliminar-alumno/${studentId}`)}`;
+    const token = this.authService.getToken();
+
+    return this.httpClient.delete(url, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      responseType: 'text'
+    });
+  }
+
+  removeTeacher(classroomId: number, teacherId: number): Observable<Object> {
+    const url = `${this.apiUrl.buildUrl(`/cursos/${classroomId}/eliminar-profesor/${teacherId}`)}`;
+    const token = this.authService.getToken();
+
+    return this.httpClient.delete(url, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      responseType: 'text'
+    });
+  }
+
+  addStudentToClassroom(classroomId: number, studentId: number): Observable<any> {
+    const url = `${this.apiUrl.buildUrl(`/cursos/${classroomId}/agregar-alumno`)}`;
+    const token = this.authService.getToken();
+
+    const body = { userId: studentId };
+    return this.httpClient.post(url, body, {
+      headers: {
+        'Authorization': `Bearer ${token}`
       }
+    });
+  }
+
+  addTeacherToClassroom(classroomId: number, teacherId: number): Observable<Object> {
+    const url = `${this.apiUrl.buildUrl(`/cursos/${classroomId}/agregar-profesor/${teacherId}`)}`;
+    const token = this.authService.getToken();
+
+    return this.httpClient.post(url, {}, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      responseType: 'text'
     });
   }
 }
