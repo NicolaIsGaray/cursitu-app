@@ -8,16 +8,116 @@
 
 main {
   display: flex;
-  min-height: 100vh;
   background: #fafafa;
+  position: relative;
 }
+
+/* ===== SIDEBAR DE NAVEGACIÓN (IZQUIERDA) ===== */
+
+.navigation-sidebar {
+  width: 280px;
+  background: white;
+  border-right: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  padding: 15px 0;
+}
+
+.navigation-sidebar .sidebar-header {
+  padding: 10px 25px 20px 25px;
+  border-bottom: none;
+}
+.navigation-sidebar .sidebar-header span {
+  font-size: 20px;
+  font-weight: 600;
+  color: #6a4c93;
+}
+
+.navigation-sidebar nav ul {
+  padding: 0 15px;
+  list-style: none;
+}
+
+/* Estilo unificado para todos los enlaces de la barra lateral */
+.navigation-sidebar li a {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 15px 20px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-decoration: none;
+  margin-bottom: 5px;
+}
+
+/* Iconos SVG dentro de los enlaces */
+.navigation-sidebar li a svg {
+  width: 22px;
+  height: 22px;
+  stroke-width: 2;
+  flex-shrink: 0;
+  transition: all 0.25s ease;
+}
+
+.navigation-sidebar li a:hover {
+  background: #6a4c93;
+  color: #6a4c93;
+  color: white;
+}
+
+.navigation-sidebar li a:hover svg {
+  color: white;
+}
+
+/* Sección de perfil en el sidebar */
+.sidebar-profile-section ul {
+  list-style: none;
+  padding: 0 15px;
+}
+
+/* Sección de usuario en el sidebar */
+.sidebar-user-section {
+  margin-top: auto;
+  padding-bottom: 20px;
+}
+
+.sidebar-divider {
+  height: 1px;
+  background-color: #e0e0e0;
+  margin: 15px 20px;
+}
+
+.sidebar-user-section ul {
+  padding: 0 15px;
+  margin: 0;
+  list-style: none;
+}
+
+.sidebar-user-section .logout-link {
+  color: #e53935 !important;
+}
+
+.sidebar-user-section .logout-link:hover {
+  background-color: #e53935 !important;
+  color: white !important;
+}
+
 
 /* ===== CONTENIDO PRINCIPAL ===== */
 
 .main-content {
   flex: 1;
   padding: 30px 40px;
-  max-width: calc(100% - 350px);
+  margin-left: 280px; /* Ancho de la nueva sidebar */
 }
 
 /* Header con título y perfil */
@@ -43,24 +143,6 @@ main {
   gap: 2em;
 }
 
-.user-profile button {
-  padding: 16px;
-  cursor: pointer;
-}
-
-.user-profile a {
-  padding: 16px;
-  background-color: #6a4c93;
-  text-decoration: none;
-  border-radius: 20px;
-  color: white;
-  transition: all 0.1s ease-in-out;
-}
-
-.user-profile a:hover {
-  background-color: #a488d8;
-}
-
 .user-icon {
   width: 50px;
   height: 50px;
@@ -78,34 +160,6 @@ main {
   color: #6a4c93;
 }
 
-.logout-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  font-weight: bold;
-  color: white;
-  background-color: #e53935; /* Un tono de rojo moderno */
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px; /* Espacio por si quieres añadir un ícono */
-}
-
-.logout-button:hover {
-  background-color: #c62828; /* Un rojo un poco más oscuro al pasar el mouse */
-  transform: translateY(-2px); /* Efecto sutil de elevación */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.logout-button:active {
-  transform: translateY(0); /* Vuelve a la posición original al hacer clic */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
 /* Punto verde de estado */
 .status-dot {
   position: absolute;
@@ -118,40 +172,159 @@ main {
   border: 2px solid white;
 }
 
-/* Sección de dropdowns */
-.dropdowns-section {
+/* ===== SECCIÓN DE TARJETAS DE ACCESO RÁPIDO ===== */
+.cards-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+  margin-bottom: 40px;
+}
+
+.info-card {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e0e0e0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  color: inherit;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 30px;
 }
 
-.dropdown-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 14px 18px;
-  background: #f3f3f3;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s;
+.info-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
-.dropdown-item:hover {
-  background: #ebebeb;
-}
-
-.dropdown-item span {
-  font-size: 15px;
-  font-weight: 500;
+.info-card h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
   color: #333;
 }
 
-.dropdown-arrow {
-  width: 18px;
-  height: 18px;
+.info-card p {
+  font-size: 14px;
+  color: #757575;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Colores para tarjetas de Alumno */
+.student-card-1 { border-left: 5px solid #81c784; }
+.student-card-2 { border-left: 5px solid #64b5f6; }
+.student-card-3 { border-left: 5px solid #ffb74d; }
+
+/* Colores para tarjetas de Profesor */
+.teacher-card-1 { border-left: 5px solid #e57373; }
+.teacher-card-2 { border-left: 5px solid #9575cd; }
+.teacher-card-3 { border-left: 5px solid #4db6ac; }
+
+/* Estilo especial para la tarjeta de Admin */
+.admin-card {
+  grid-column: 1 / -1; /* Ocupa todo el ancho */
+  text-align: center;
+  background: linear-gradient(135deg, #6a4c93, #8e7cc3);
+  color: white;
+  border: none;
+}
+
+.admin-card h2 {
+  font-size: 24px;
+  margin: 0 0 10px 0;
+  font-weight: 700;
+}
+
+.admin-card p {
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.admin-card:hover {
+  box-shadow: 0 10px 25px rgba(106, 76, 147, 0.3);
+}
+
+/* ===== SECCIÓN DE COMUNICADOS ===== */
+.comunicados-section {
+  margin-bottom: 40px;
+}
+
+.comunicados-section h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.comunicados-list {
+  display: grid;
+  gap: 20px;
+}
+
+.comunicado-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-left: 5px solid #9575cd; /* Color de acento */
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.comunicado-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.materia-tag {
+  background-color: #e9e4f5;
+  color: #6a4c93;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.profesor-name {
+  font-size: 13px;
+  color: #757575;
+}
+
+.comunicado-body {
+  padding: 20px;
+}
+
+.comunicado-meta {
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 12px;
+}
+
+.comunicado-meta span {
+  margin-right: 8px;
+}
+
+.comunicado-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 10px 0;
+}
+
+.comunicado-message {
+  font-size: 14px;
   color: #666;
+  line-height: 1.6;
+  margin: 0;
 }
 
 /* Sección de tareas con campana */
@@ -340,7 +513,7 @@ main {
   gap: 12px;
   padding: 10px;
   border-radius: 6px;
-  cursor: pointer;
+  cursor: default;
   transition: background 0.2s;
 }
 
@@ -387,7 +560,7 @@ main {
 
 @media screen and (max-width: 1024px) {
   .main-content {
-    max-width: 100%;
+    margin-left: 280px; /* Mantenemos el ancho para tablets */
     padding: 20px;
   }
 
@@ -402,11 +575,16 @@ main {
 
 @media screen and (max-width: 768px) {
   main {
-    flex-direction: column;
+    /* La dirección de flex ya no es necesaria aquí */
+  }
+
+  .navigation-sidebar {
+    display: none; /* Ocultar la barra de navegación en móvil */
   }
 
   .main-content {
     max-width: 100%;
+    margin-left: 0; /* Quitar el margen en móvil */
     padding: 20px;
   }
 
@@ -441,16 +619,6 @@ main {
     text-align: center;
   }
 
-  .user-profile {
-    flex-direction: column-reverse;
-    align-items: center;
-    gap: 15px;
-  }
-
-  .user-profile a, .user-profile button {
-    width: 100%;
-    text-align: center;
-  }
 }
 
 /* ===== SIDEBAR DE NOTIFICACIONES ===== */

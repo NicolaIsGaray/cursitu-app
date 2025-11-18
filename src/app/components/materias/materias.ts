@@ -146,6 +146,33 @@ export class Materias {
     clase.expanded = !clase.expanded;
   }
 
+  // --- MÉTODOS DE NAVEGACIÓN Y SESIÓN (COPIADOS DE HOME) ---
+
+  userHasRole(role: string): boolean {
+    return this.authService.hasRole(role);
+  }
+
+  logout(): void {
+    this.authService.logout();
+    window.location.reload();
+  }
+
+  toggleDropdown(type: 'materias' | 'tareas' | 'grupos' | 'mis-materias' | 'perfil') {
+    console.log(`Dropdown seleccionado: ${type}`);
+
+    if (type === 'tareas') {
+      this.router.navigate(['/tareas']);
+    } else if (type === 'grupos') {
+      this.router.navigate(['/grupos']);
+    } else if (type === 'materias') {
+      this.router.navigate(['/materias']);
+    } else if (type === 'mis-materias') {
+      this.router.navigate(['/tareas-docente']);
+    } else if (type === 'perfil') {
+      this.router.navigate(['/home']); // Temporalmente, puedes cambiarlo a '/perfil'
+    }
+  }
+
   // Navegar al home
   goToHome() {
     this.router.navigate(['/home']);

@@ -13,6 +13,16 @@ interface Notification {
   read: boolean;
 }
 
+// Interfaz para los Comunicados
+interface Comunicado {
+  materia: string;
+  profesor: string;
+  fecha: string;
+  hora: string;
+  titulo: string;
+  mensaje: string;
+}
+
 
 @Component({
   selector: 'app-home',
@@ -99,15 +109,8 @@ export class Home {
     {
       icon: 'assignment',
       title: 'Nueva tarea asignada',
-      message: 'El profesor de "Matemática Discreta" ha asignado un nuevo trabajo práctico.',
+      message: 'El profesor de "Álgebra y Estadística" ha asignado un nuevo trabajo práctico.',
       time: 'Hace 15 min',
-      read: false,
-    },
-    {
-      icon: 'message',
-      title: 'Mensaje de Juan Pérez',
-      message: 'Hola, ¿podemos revisar el punto 3 del proyecto?',
-      time: 'Hace 1 hora',
       read: false,
     },
     {
@@ -127,14 +130,35 @@ export class Home {
     {
       icon: 'assignment',
       title: 'Calificación recibida',
-      message: 'Tu entrega para "Algoritmos I" ha sido calificada.',
+      message: 'Tu entrega para "Interpretación de Textos en Inglés" ha sido calificada.',
       time: 'Hace 2 días',
       read: true,
     },
   ];
 
+  // --- COMUNICADOS ---
+  comunicados: Comunicado[] = [
+    {
+      materia: 'Sistemas Operativos Avanzados',
+      profesor: 'Mauricio Prades',
+      fecha: '21 de Noviembre, 2025',
+      hora: '10:30 AM',
+      titulo: 'Recordatorio: Entrega de TP2',
+      mensaje: 'Recuerden que la fecha límite para la entrega del Trabajo Práctico N°2 es este viernes. No se aceptarán entregas fuera de término.'
+    },
+    {
+      materia: 'Bases de Datos Avanzadas',
+      profesor: 'Luis Chiaramonte',
+      fecha: '25 de Noviembre, 2025',
+      hora: '03:15 PM',
+      titulo: 'Cancelación de clase de consulta',
+      mensaje: 'La clase de consulta programada para mañana ha sido cancelada por motivos de fuerza mayor. Se reprogramará para la próxima semana.'
+    }
+  ];
+
+
   // Función para cambiar el estado de un dropdown y navegar
-  toggleDropdown(type: 'materias' | 'tareas' | 'grupos' | 'mis-materias') {
+  toggleDropdown(type: 'materias' | 'tareas' | 'grupos' | 'mis-materias' | 'perfil') {
     console.log(`Dropdown seleccionado: ${type}`);
 
     // Navegar el tipo
@@ -146,8 +170,28 @@ export class Home {
       this.router.navigate(['/materias']);
     } else if (type === 'mis-materias') {
       this.router.navigate(['/tareas-docente']);
+    } else if (type === 'perfil') {
+      this.router.navigate(['/home']); // Temporalmente, puedes cambiarlo a '/perfil'
     } else {
       alert("Parece que hubo un error...");
+    }
+  }
+
+  // Función para navegar desde las tarjetas
+  navigateTo(route: string) {
+    console.log(`Navegando a: ${route}`);
+    // Aquí puedes mapear las rutas a tus componentes reales
+    const routeMap: { [key: string]: string } = {
+      'horarios': '/horarios', // Ruta para horarios
+      'tareas': '/tareas',
+      'grupos': '/grupos',
+      'gestionar-grupos': '/grupos', // Profesor
+      'mis-materias': '/tareas-docente', // Profesor
+    };
+
+    const finalRoute = routeMap[route];
+    if (finalRoute) {
+      this.router.navigate([finalRoute]);
     }
   }
 

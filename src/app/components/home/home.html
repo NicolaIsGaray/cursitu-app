@@ -1,13 +1,76 @@
 <!-- Vista Dashboard - Exactamente   -->
 <main>
+  <!-- Barra de Navegación Lateral -->
+  <aside class="navigation-sidebar">
+    <div class="sidebar-header">
+      <span>CursITU</span>
+    </div>
+    <!-- Sección de Perfil y Administración -->
+    <div class="sidebar-profile-section">
+      <ul>
+        <li>
+          <a (click)="toggleDropdown('perfil')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            <span>Perfil</span>
+          </a>
+        </li>
+        <li *ngIf="userHasRole('ROLE_ADMIN')">
+          <a routerLink="/administrador">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+            <span>Administración</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="sidebar-divider"></div>
+    <nav>
+      <ul>
+        <li *ngIf="!userHasRole('ROLE_PROFESOR')">
+          <a (click)="toggleDropdown('materias')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+            <span>Materias</span>
+          </a>
+        </li>
+        <li *ngIf="userHasRole('ROLE_PROFESOR')">
+          <a (click)="toggleDropdown('mis-materias')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <span>Mis materias</span>
+          </a>
+        </li>
+        <li>
+          <a (click)="toggleDropdown('tareas')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+            <span>Tareas</span>
+          </a>
+        </li>
+        <li>
+          <a (click)="toggleDropdown('grupos')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            <span>Grupos</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <!-- Sección de Usuario -->
+    <div class="sidebar-user-section">
+      <div class="sidebar-divider"></div>
+      <ul>
+        <li>
+          <a (click)="logout()" class="logout-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            <span>Cerrar Sesión</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </aside>
+
   <!-- Contenido Principal -->
   <div class="main-content">
     <!-- Header con título y perfil -->
     <div class="top-header">
       <h1>¡BIENVENIDO/A {{(this.user.nombre).toUpperCase()}}!</h1>
       <div class="user-profile">
-        <button class="logout-button" type="button" (click)="logout()">Cerrar Sesión</button>
-        <a routerLink="/administrador" *ngIf="userHasRole('ROLE_ADMIN')">Administración</a>
         <!-- Ícono de usuario con indicador verde -->
         <div class="user-icon">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -19,34 +82,66 @@
       </div>
     </div>
 
-    <!-- Dropdowns -->
-    <div class="dropdowns-section">
-      <div class="dropdown-item" (click)="toggleDropdown('materias')" *ngIf="!userHasRole('ROLE_PROFESOR')">
-        <span>Materias</span>
-        <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="6 9 12 15 18 9"></polyline>
-        </svg>
-      </div>
+    <!-- Tarjetas de Acceso Rápido -->
+    <div class="cards-section">
+      <!-- Vista de Alumno -->
+      <ng-container *ngIf="!userHasRole('ROLE_PROFESOR') && !userHasRole('ROLE_ADMIN')">
+        <div class="info-card student-card-1" (click)="navigateTo('horarios')">
+          <h3>Consultar horarios</h3>
+          <p>Revisa tus horarios de cursado y exámenes.</p>
+        </div>
+        <div class="info-card student-card-2" (click)="navigateTo('tareas')">
+          <h3>Ver Tareas Pendientes</h3>
+          <p>Accede a tus tareas y entregas.</p>
+        </div>
+        <div class="info-card student-card-3" (click)="navigateTo('grupos')">
+          <h3>Ver mis grupos</h3>
+          <p>Colabora con tus compañeros.</p>
+        </div>
+      </ng-container>
 
-      <div class="dropdown-item" (click)="toggleDropdown('mis-materias')" *ngIf="userHasRole('ROLE_PROFESOR')">
-        <span>Mis materias</span>
-        <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="6 9 12 15 18 9"></polyline>
-        </svg>
-      </div>
+      <!-- Vista de Profesor -->
+      <ng-container *ngIf="userHasRole('ROLE_PROFESOR') && !userHasRole('ROLE_ADMIN')">
+        <div class="info-card teacher-card-1" (click)="navigateTo('gestionar-grupos')">
+          <h3>Gestionar Grupos</h3>
+          <p>Crea y administra los grupos de tus cursos.</p>
+        </div>
+        <div class="info-card teacher-card-2" (click)="navigateTo('mis-materias')">
+          <h3>Ver Mis Cursos</h3>
+          <p>Accede al material y listado de alumnos.</p>
+        </div>
+        <div class="info-card teacher-card-3" (click)="toggleNotifications()">
+          <h3>Ir a Notificaciones</h3>
+          <p>Revisa las últimas actividades y mensajes.</p>
+        </div>
+      </ng-container>
 
-      <div class="dropdown-item" (click)="toggleDropdown('tareas')">
-        <span>Tareas</span>
-        <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="6 9 12 15 18 9"></polyline>
-        </svg>
-      </div>
+      <!-- Vista de Admin -->
+      <a routerLink="/administrador" class="info-card admin-card" *ngIf="userHasRole('ROLE_ADMIN')">
+        <h2>Ir al Panel de Gestión</h2>
+        <p>Administra usuarios, roles y configuraciones del sistema.</p>
+      </a>
+    </div>
 
-      <div class="dropdown-item" (click)="toggleDropdown('grupos')">
-        <span>Grupos</span>
-        <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="6 9 12 15 18 9"></polyline>
-        </svg>
+    <!-- Sección de Comunicados -->
+    <div class="comunicados-section">
+      <h2>Comunicados</h2>
+      <div class="comunicados-list">
+        <div class="comunicado-card" *ngFor="let comunicado of comunicados">
+          <div class="comunicado-header">
+            <span class="materia-tag">{{ comunicado.materia }}</span>
+            <span class="profesor-name">Emitido por: {{ comunicado.profesor }}</span>
+          </div>
+          <div class="comunicado-body">
+            <div class="comunicado-meta">
+              <span>{{ comunicado.fecha }}</span>
+              <span>&bull;</span>
+              <span>{{ comunicado.hora }}</span>
+            </div>
+            <h4 class="comunicado-title">{{ comunicado.titulo }}</h4>
+            <p class="comunicado-message">{{ comunicado.mensaje }}</p>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -107,9 +202,6 @@
   <div class="students-sidebar">
     <div class="sidebar-header">
       <span>Estudiantes</span>
-      <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <polyline points="9 18 15 12 9 6"></polyline>
-      </svg>
     </div>
 
     <div class="students-list">
