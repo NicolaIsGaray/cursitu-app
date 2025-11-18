@@ -169,7 +169,7 @@ export class Materias {
     } else if (type === 'mis-materias') {
       this.router.navigate(['/tareas-docente']);
     } else if (type === 'perfil') {
-      this.router.navigate(['/home']); // Temporalmente, puedes cambiarlo a '/perfil'
+      this.router.navigate(['/perfil']);
     }
   }
 

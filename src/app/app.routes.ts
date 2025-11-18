@@ -9,6 +9,7 @@ import { NotificacionesDocente } from './components/notificaciones-docente/notif
 import { Materias } from './components/materias/materias';
 import { Administrador } from './components/administrador/administrador';
 import { AuthGuard } from './guards/auth-guard';
+import { UserProfile } from './components/user-profile/user-profile';
 
 export const routes: Routes = [
     // Rutas comunes
@@ -26,6 +27,7 @@ export const routes: Routes = [
 
     // Rutas Multi-Rol
     {path: "materias", component: Materias, canActivate: [AuthGuard]},
+    {path: "perfil", component:UserProfile, canActivate: [AuthGuard]},
 
     // Rutas de Administrador
     {path: "administrador", component: Administrador, canActivate: [AuthGuard], data: { roles: ['ROLE_ADMIN'] }},

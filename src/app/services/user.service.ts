@@ -51,7 +51,7 @@ export class UserService {
     return this.httpClient.post(url, user);
   }
 
-  editUser(id: number, user: User) {
+  editUser(id: number, user: any) {
     const url = `${this.apiUrl.buildUrl(`/editar-usuario/${id}`)}`;
     const token = this.authService.getToken();
 
