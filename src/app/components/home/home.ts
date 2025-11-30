@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
 import { CommonModule, NgFor } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { User } from '../../models/user';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
+import { Sidebar, UserRole } from '../sidebar/sidebar';
 // Interfaz para las notificaciones
 interface Notification {
   icon: 'assignment' | 'message' | 'system' | 'group';
@@ -26,11 +28,38 @@ interface Comunicado {
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule, NgFor, RouterLink],
+  imports: [CommonModule, NgFor, RouterLink, FormsModule, Sidebar],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
 export class Home {
+
+  // Rol del usuario para el sidebar
+  currentRole: UserRole = 'estudiante';
+
+  /**
+   * ═══════════════════════════════════════════════════════════════
+   * FILTRO FRONTEND-ONLY - Para conectar al backend leer esto:
+   * ═══════════════════════════════════════════════════════════════
+   * Campo UI: notificationFilter (select)
+   * Tipo: 'all' | 'assignment' | 'message' | 'group' | 'system'
+   * Filtra por: tipo de notificacion (icon field)
+   *
+   * CÓMO CONECTAR AL BACKEND:
+   * 1. Crear endpoint: GET /api/notificaciones?tipo={notificationFilter}
+   * 2. En el service, agregar método:
+   *    getNotificaciones(tipo?: string): Observable<Notification[]>
+   * 3. Reemplazar el getter 'filteredNotifications' por llamada al service
+   * ═══════════════════════════════════════════════════════════════
+   */
+  notificationFilter: string = 'all';
+
+  get filteredNotifications(): Notification[] {
+    if (this.notificationFilter === 'all') {
+      return this.notifications;
+    }
+    return this.notifications.filter(n => n.icon === this.notificationFilter);
+  }
 
   // Usuario Autenticado Actual
   user!: User;
@@ -223,6 +252,18 @@ export class Home {
     this.obtainDNIFromAuth();
     this.getUserData();
     this.getOnlyStudents();
+    this.setCurrentRole();
+  }
+
+  // Determina el rol para el sidebar basado en los roles del AuthService
+  private setCurrentRole(): void {
+    if (this.authService.hasRole('ROLE_ADMIN')) {
+      this.currentRole = 'admin';
+    } else if (this.authService.hasRole('ROLE_PROFESOR')) {
+      this.currentRole = 'docente';
+    } else {
+      this.currentRole = 'estudiante';
+    }
   }
 
   userHasRole(role: string): boolean {

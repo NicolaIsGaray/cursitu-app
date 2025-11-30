@@ -30,114 +30,13 @@ main {
 }
 
 /* ================================================= */
-/* ===== BARRA DE NAVEGACIÓN PRINCIPAL (HOME) ===== */
-/* ================================================= */
-/* ===== SIDEBAR DE NAVEGACIÓN (IZQUIERDA) ===== */
-
-.navigation-sidebar {
-  width: 280px;
-  background: white;
-  border-right: 1px solid #e0e0e0;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 100;
-  padding: 15px 0;
-}
-
-.navigation-sidebar .sidebar-header {
-  padding: 10px 25px 20px 25px;
-  border-bottom: none;
-}
-.navigation-sidebar .sidebar-header span {
-  font-size: 20px;
-  font-weight: 600;
-  color: #6a4c93;
-}
-
-.navigation-sidebar nav ul {
-  padding: 0 15px;
-  list-style: none;
-}
-
-/* Estilo unificado para todos los enlaces de la barra lateral */
-.navigation-sidebar li a {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 15px 20px;
-  font-size: 16px;
-  font-weight: 500;
-  color: #333;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  text-decoration: none;
-  margin-bottom: 5px;
-}
-
-/* Iconos SVG dentro de los enlaces */
-.navigation-sidebar li a svg {
-  width: 22px;
-  height: 22px;
-  stroke-width: 2;
-  flex-shrink: 0;
-  transition: all 0.25s ease;
-}
-
-.navigation-sidebar li a:hover {
-  background: #6a4c93;
-  color: white;
-}
-
-.navigation-sidebar li a:hover svg {
-  color: white;
-}
-
-/* Sección de perfil en el sidebar */
-.sidebar-profile-section ul {
-  list-style: none;
-  padding: 0 15px;
-}
-
-/* Sección de usuario en el sidebar */
-.sidebar-user-section {
-  margin-top: auto;
-  padding-bottom: 20px;
-}
-
-.sidebar-divider {
-  height: 1px;
-  background-color: #e0e0e0;
-  margin: 15px 20px;
-}
-
-.sidebar-user-section ul {
-  padding: 0 15px;
-  margin: 0;
-  list-style: none;
-}
-
-.sidebar-user-section .logout-link {
-  color: #e53935 !important;
-}
-
-.sidebar-user-section .logout-link:hover {
-  background-color: #e53935 !important;
-  color: white !important;
-}
-
-/* ================================================= */
 /* ===== CONTENIDO PRINCIPAL DEL PERFIL DE USUARIO ===== */
 /* ================================================= */
 
 .main-content {
-  margin-left: 280px;
+  margin-left: 250px; /* Ancho del sidebar reactivo */
   padding: 30px 40px;
-  width: calc(80% - 280px);
+  width: calc(100% - 250px);
 }
 
 /* Contenedor para las alertas/notificaciones */
@@ -363,4 +262,38 @@ main {
 
 .profile-form .btn-save:hover {
   background-color: #563d7c;
+}
+
+/* ===== RESPONSIVE ===== */
+
+@media screen and (max-width: 768px) {
+  .main-content {
+    margin-left: 70px; /* Sidebar colapsado en mobile */
+    width: calc(100% - 70px);
+    padding: 20px;
+  }
+
+  .profile-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .profile-options-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #eee;
+    padding-right: 0;
+    padding-bottom: 15px;
+  }
+
+  .profile-options-sidebar ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .profile-options-sidebar li a {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
 }

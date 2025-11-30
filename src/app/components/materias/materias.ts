@@ -1,21 +1,48 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subjects } from '../../models/subjects';
 import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
-import { GroupService } from '../../services/group.service';
-import { ClassroomService } from '../../services/classroom.service';
 import { SubjectsService } from '../../services/subjects.service';
 import { User } from '../../models/user';
+import { Sidebar, UserRole } from '../sidebar/sidebar';
 
 @Component({
   selector: 'app-materias',
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule, Sidebar],
   templateUrl: './materias.html',
   styleUrl: './materias.css',
 })
 export class Materias {
+  // Rol del usuario para el sidebar
+  currentRole: UserRole = 'estudiante';
+
+  /**
+   * ═══════════════════════════════════════════════════════════════
+   * FILTRO FRONTEND-ONLY - Para conectar al backend leer esto:
+   * ═══════════════════════════════════════════════════════════════
+   * Campo UI: searchTerm (input text)
+   * Tipo: string
+   * Filtra por: nombre de materia (case-insensitive, includes)
+   *
+   * CÓMO CONECTAR AL BACKEND:
+   * 1. Crear endpoint: GET /api/materias?search={searchTerm}
+   * 2. En SubjectsService, agregar método:
+   *    searchSubjects(term: string): Observable<Subjects[]>
+   * 3. Reemplazar el getter 'filteredSubjects' por llamada al service
+   * ═══════════════════════════════════════════════════════════════
+   */
+  searchTerm: string = '';
+
+  get filteredSubjects(): Subjects[] {
+    if (!this.subjects) return [];
+    if (!this.searchTerm.trim()) return this.subjects;
+    return this.subjects.filter(s =>
+      s.nombre.toLowerCase().includes(this.searchTerm.toLowerCase())
+    );
+  }
   // Usuario Autenticado Actual
   user!: User;
 
@@ -182,7 +209,17 @@ export class Materias {
     this.getOnlyStudents();
     this.obtainDNIFromAuth();
     this.getUserData();
-
     this.getSubjects();
+    this.setCurrentRole();
+  }
+
+  private setCurrentRole(): void {
+    if (this.authService.hasRole('ROLE_ADMIN')) {
+      this.currentRole = 'admin';
+    } else if (this.authService.hasRole('ROLE_PROFESOR')) {
+      this.currentRole = 'docente';
+    } else {
+      this.currentRole = 'estudiante';
+    }
   }
 }

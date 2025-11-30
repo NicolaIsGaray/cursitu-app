@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../services/user.service';
 import { User } from '../../models/user';
 import { FormsModule } from '@angular/forms';
+import { Sidebar, UserRole } from '../sidebar/sidebar';
 
 interface UpdateUserDTO {
   id: number
@@ -16,12 +17,15 @@ interface UpdateUserDTO {
 
 @Component({
   selector: 'app-user-profile',
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, FormsModule, Sidebar],
   templateUrl: './user-profile.html',
   styleUrl: './user-profile.css',
   standalone: true,
 })
 export class UserProfile {
+  // Rol del usuario para el sidebar reactivo
+  currentRole: UserRole = 'estudiante';
+
   // Usuario Autenticado Actual
     user!: User;
     userSub!: any;
@@ -178,5 +182,20 @@ export class UserProfile {
     this.obtainDNIFromAuth();
     this.getUserData();
     this.getOnlyStudents();
+    this.setCurrentRole();
+  }
+
+  /**
+   * Determina el rol actual del usuario basado en AuthService.
+   * Mapea los roles del backend a los roles del sidebar.
+   */
+  private setCurrentRole(): void {
+    if (this.authService.hasRole('ROLE_ADMIN')) {
+      this.currentRole = 'admin';
+    } else if (this.authService.hasRole('ROLE_PROFESOR')) {
+      this.currentRole = 'docente';
+    } else {
+      this.currentRole = 'estudiante';
+    }
   }
 }

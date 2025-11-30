@@ -1,10 +1,13 @@
-<!-- Vista de Tareas Docente -   -->
+<!-- Vista de Tareas Docente -->
 <main>
+  <!-- Sidebar Reactivo por Rol -->
+  <app-sidebar [currentRole]="currentRole"></app-sidebar>
+
   <div class="main-content">
     <!-- Header -->
     <div class="top-header">
       <button class="btn btn-outline" (click)="goToHome()">Volver al Inicio</button>
-      <h1>¡BIENVENIDO DOCENTE!</h1>
+      <h1>TAREAS - DOCENTE</h1>
       <div class="user-profile">
         <div class="user-icon" (click)="goToHome()">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

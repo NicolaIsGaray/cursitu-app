@@ -1,5 +1,8 @@
-<!-- Vista de Grupos del Estudiante -   -->
+<!-- Vista de Grupos del Estudiante -->
 <main>
+  <!-- Sidebar Reactivo por Rol -->
+  <app-sidebar [currentRole]="currentRole"></app-sidebar>
+
   <div class="main-content">
     <!-- Header -->
     <div class="top-header">
@@ -41,9 +44,14 @@
           </div>
         </div>
 
+        <!-- Filtro de búsqueda de grupos -->
+        <div class="filter-bar">
+          <input type="text" [(ngModel)]="groupSearchTerm" placeholder="Buscar grupo..." class="search-input">
+        </div>
+
         <!-- Lista de grupos -->
-        <div class="groups-list" *ngIf="filteredGroups.length > 0">
-          <div class="group-container" *ngFor="let group of filteredGroups">
+        <div class="groups-list" *ngIf="searchedGroups.length > 0">
+          <div class="group-container" *ngFor="let group of searchedGroups">
             <!-- Header del grupo -->
             <div class="group-header">
               <span>GRUPO {{ group.nombre }}</span>

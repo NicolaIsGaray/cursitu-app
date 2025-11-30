@@ -10,6 +10,7 @@ import { SubjectsService } from '../../services/subjects.service';
 import { Subjects } from '../../models/subjects';
 import { Group } from '../../models/group';
 import { GroupService } from '../../services/group.service';
+import { Sidebar, UserRole } from '../sidebar/sidebar';
 
 // Interfaz para los miembros del grupo
 interface GroupMember {
@@ -22,17 +23,45 @@ interface GroupCreateDTO {
     nombre: string;
     limite: number;
     comision: string;
-    miembros: Set<User>; 
+    miembros: Set<User>;
     pendientes: Set<User>;
 }
 
 @Component({
   selector: 'app-grupos',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, Sidebar],
   templateUrl: './grupos.html',
   styleUrl: './grupos.css',
 })
 export class Grupos {
+  // Rol del usuario para el sidebar
+  currentRole: UserRole = 'estudiante';
+
+  /**
+   * ═══════════════════════════════════════════════════════════════
+   * FILTRO FRONTEND-ONLY - Para conectar al backend leer esto:
+   * ═══════════════════════════════════════════════════════════════
+   * Campo UI: groupSearchTerm (input text)
+   * Tipo: string
+   * Filtra por: nombre del grupo (case-insensitive, includes)
+   *
+   * CÓMO CONECTAR AL BACKEND:
+   * 1. Crear endpoint: GET /api/grupos?search={groupSearchTerm}
+   * 2. En GroupService, agregar método:
+   *    searchGroups(term: string): Observable<Group[]>
+   * 3. Reemplazar el getter 'searchedGroups' por llamada al service
+   * ═══════════════════════════════════════════════════════════════
+   */
+  groupSearchTerm: string = '';
+
+  get searchedGroups(): Group[] {
+    if (!this.groupSearchTerm.trim()) {
+      return this.filteredGroups;
+    }
+    return this.filteredGroups.filter(g =>
+      g.nombre.toLowerCase().includes(this.groupSearchTerm.toLowerCase())
+    );
+  }
   // Usuario Autenticado Actual
   user!: User;
 
@@ -262,9 +291,19 @@ export class Grupos {
     this.getOnlyStudents();
     this.obtainDNIFromAuth();
     this.getUserData();
-
     this.getSubjects();
     this.getAllGroups();
+    this.setCurrentRole();
+  }
+
+  private setCurrentRole(): void {
+    if (this.authService.hasRole('ROLE_ADMIN')) {
+      this.currentRole = 'admin';
+    } else if (this.authService.hasRole('ROLE_PROFESOR')) {
+      this.currentRole = 'docente';
+    } else {
+      this.currentRole = 'estudiante';
+    }
   }
 
   // Navegar al home/dashboard

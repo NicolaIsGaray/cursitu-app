@@ -1,5 +1,8 @@
-<!-- Vista de Tareas del Estudiante -   -->
+<!-- Vista de Tareas del Estudiante -->
 <main>
+  <!-- Sidebar Reactivo por Rol -->
+  <app-sidebar [currentRole]="currentRole"></app-sidebar>
+
   <div class="main-content">
     <!-- Header -->
     <div class="top-header">
@@ -45,10 +48,19 @@
           </div>
         </div>
 
+        <!-- Filtro de estado -->
+        <div class="filter-bar" *ngIf="selectedSubjectId">
+          <select [(ngModel)]="statusFilter" class="filter-select">
+            <option value="all">Todos los estados</option>
+            <option value="Pendiente">Pendiente</option>
+            <option value="Entregado">Entregado</option>
+          </select>
+        </div>
+
         <!-- Lista de trabajos prácticos/tareas -->
         <div class="assignments-container">
           <div class="assignments-list" *ngIf="selectedSubjectId; else noSubjectSelected">
-            <div class="assignment-item" *ngFor="let assignment of displayedAssignments" [class]="getNormalizedStatus(assignment.status)">
+            <div class="assignment-item" *ngFor="let assignment of filteredAssignments" [class]="getNormalizedStatus(assignment.status)">
               <!-- Columna Izquierda: Icono e Info -->
               <div class="assignment-left">
                 <div class="file-icon" [class.pdf]="assignment.fileType === 'pdf'" [class.excel]="assignment.fileType === 'excel'">

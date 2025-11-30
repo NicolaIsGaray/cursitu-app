@@ -17,6 +17,7 @@ main {
 .main-content {
   flex: 1;
   padding: 30px 40px;
+  margin-left: 250px; /* Ancho del sidebar reactivo */
   max-width: calc(100% - 350px);
 }
 
@@ -445,7 +446,8 @@ main {
   }
 
   .main-content {
-    max-width: 100%;
+    margin-left: 70px; /* Sidebar colapsado en mobile */
+    max-width: calc(100% - 70px);
     padding: 20px;
   }
 

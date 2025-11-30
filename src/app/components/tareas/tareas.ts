@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subjects } from '../../models/subjects';
 import { User } from '../../models/user';
 import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
 import { SubjectsService } from '../../services/subjects.service';
+import { Sidebar, UserRole } from '../sidebar/sidebar';
 
 // Interfaz para las tareas/trabajos prácticos
 interface Assignment {
@@ -17,11 +19,37 @@ interface Assignment {
 
 @Component({
   selector: 'app-tareas',
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule, Sidebar],
   templateUrl: './tareas.html',
   styleUrl: './tareas.css',
 })
 export class Tareas {
+  // Rol del usuario para el sidebar
+  currentRole: UserRole = 'estudiante';
+
+  /**
+   * ═══════════════════════════════════════════════════════════════
+   * FILTRO FRONTEND-ONLY - Para conectar al backend leer esto:
+   * ═══════════════════════════════════════════════════════════════
+   * Campo UI: statusFilter (select)
+   * Tipo: 'all' | 'Pendiente' | 'Entregado'
+   * Filtra por: estado de la tarea
+   *
+   * CÓMO CONECTAR AL BACKEND:
+   * 1. Crear endpoint: GET /api/tareas?status={statusFilter}&materiaId={id}
+   * 2. En el service, agregar método:
+   *    getTareas(materiaId: number, status?: string): Observable<Assignment[]>
+   * 3. Reemplazar el getter 'filteredAssignments' por llamada al service
+   * ═══════════════════════════════════════════════════════════════
+   */
+  statusFilter: string = 'all';
+
+  get filteredAssignments(): Assignment[] {
+    if (this.statusFilter === 'all') {
+      return this.displayedAssignments;
+    }
+    return this.displayedAssignments.filter(a => a.status === this.statusFilter);
+  }
   // Usuario Autenticado Actual
   user!: User;
 
@@ -275,5 +303,16 @@ export class Tareas {
     this.getUserData();
     this.getSubjects();
     this.getOnlyStudents();
+    this.setCurrentRole();
+  }
+
+  private setCurrentRole(): void {
+    if (this.authService.hasRole('ROLE_ADMIN')) {
+      this.currentRole = 'admin';
+    } else if (this.authService.hasRole('ROLE_PROFESOR')) {
+      this.currentRole = 'docente';
+    } else {
+      this.currentRole = 'estudiante';
+    }
   }
 }

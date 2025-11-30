@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { Sidebar, UserRole } from '../sidebar/sidebar';
+import { AuthService } from '../../services/auth.service';
 
 // Interfaz para los estudiantes
 interface Student {
@@ -21,11 +23,13 @@ interface Subject {
 
 @Component({
   selector: 'app-notificaciones-docente',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, Sidebar],
   templateUrl: './notificaciones-docente.html',
   styleUrl: './notificaciones-docente.css',
 })
 export class NotificacionesDocente {
+  // Rol del usuario para el sidebar
+  currentRole: UserRole = 'docente';
   // Dropdown de "Notificaciones" está expandido por defecto
   isNotificationsExpanded = true;
 

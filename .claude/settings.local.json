@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tree:*)",
+      "Bash(git -C \"C:\\wamp64\\www\\CursITU\" log --oneline)",
+      "Bash(find:*)",
+      "Bash(git -C \"C:\\wamp64\\www\\CursITU\" remote -v)",
+      "Bash(npx ng build:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

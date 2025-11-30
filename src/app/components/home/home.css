@@ -12,103 +12,40 @@ main {
   position: relative;
 }
 
-/* ===== SIDEBAR DE NAVEGACIÓN (IZQUIERDA) ===== */
+/* ===== FILTROS ===== */
 
-.navigation-sidebar {
-  width: 280px;
+.filter-bar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.filter-select {
+  padding: 8px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
   background: white;
-  border-right: 1px solid #e0e0e0;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 100;
-  padding: 15px 0;
-}
-
-.navigation-sidebar .sidebar-header {
-  padding: 10px 25px 20px 25px;
-  border-bottom: none;
-}
-.navigation-sidebar .sidebar-header span {
-  font-size: 20px;
-  font-weight: 600;
-  color: #6a4c93;
-}
-
-.navigation-sidebar nav ul {
-  padding: 0 15px;
-  list-style: none;
-}
-
-/* Estilo unificado para todos los enlaces de la barra lateral */
-.navigation-sidebar li a {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 15px 20px;
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 14px;
   color: #333;
-  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.25s ease;
-  text-decoration: none;
-  margin-bottom: 5px;
 }
 
-/* Iconos SVG dentro de los enlaces */
-.navigation-sidebar li a svg {
-  width: 22px;
-  height: 22px;
-  stroke-width: 2;
-  flex-shrink: 0;
-  transition: all 0.25s ease;
+.filter-select:focus {
+  outline: none;
+  border-color: #6a4c93;
 }
 
-.navigation-sidebar li a:hover {
-  background: #6a4c93;
-  color: #6a4c93;
-  color: white;
+.search-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 14px;
 }
 
-.navigation-sidebar li a:hover svg {
-  color: white;
-}
-
-/* Sección de perfil en el sidebar */
-.sidebar-profile-section ul {
-  list-style: none;
-  padding: 0 15px;
-}
-
-/* Sección de usuario en el sidebar */
-.sidebar-user-section {
-  margin-top: auto;
-  padding-bottom: 20px;
-}
-
-.sidebar-divider {
-  height: 1px;
-  background-color: #e0e0e0;
-  margin: 15px 20px;
-}
-
-.sidebar-user-section ul {
-  padding: 0 15px;
-  margin: 0;
-  list-style: none;
-}
-
-.sidebar-user-section .logout-link {
-  color: #e53935 !important;
-}
-
-.sidebar-user-section .logout-link:hover {
-  background-color: #e53935 !important;
-  color: white !important;
+.search-input:focus {
+  outline: none;
+  border-color: #6a4c93;
 }
 
 
@@ -117,7 +54,7 @@ main {
 .main-content {
   flex: 1;
   padding: 30px 40px;
-  margin-left: 280px; /* Ancho de la nueva sidebar */
+  margin-left: 250px; /* Ancho del sidebar reactivo */
 }
 
 /* Header con título y perfil */
@@ -560,7 +497,7 @@ main {
 
 @media screen and (max-width: 1024px) {
   .main-content {
-    margin-left: 280px; /* Mantenemos el ancho para tablets */
+    margin-left: 250px; /* Ancho del sidebar reactivo */
     padding: 20px;
   }
 
@@ -574,17 +511,9 @@ main {
 }
 
 @media screen and (max-width: 768px) {
-  main {
-    /* La dirección de flex ya no es necesaria aquí */
-  }
-
-  .navigation-sidebar {
-    display: none; /* Ocultar la barra de navegación en móvil */
-  }
-
   .main-content {
     max-width: 100%;
-    margin-left: 0; /* Quitar el margen en móvil */
+    margin-left: 70px; /* Sidebar colapsado en mobile */
     padding: 20px;
   }
 

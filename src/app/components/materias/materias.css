@@ -20,7 +20,7 @@ main {
 .main-content {
   flex: 1;
   padding: 30px 40px;
-  margin-left: 280px; /* Ancho de la nueva sidebar */
+  margin-left: 250px; /* Ancho del sidebar reactivo */
 }
 
 /* Header */
@@ -304,14 +304,14 @@ main {
     grid-template-columns: repeat(2, 1fr);
   }
   .main-content {
-    margin-left: 280px;
+    margin-left: 250px;
   }
 }
 
 @media screen and (max-width: 768px) {
   .main-content {
     max-width: 100%;
-    margin-left: 0;
+    margin-left: 70px; /* Sidebar colapsado */
     padding: 20px;
   }
   .subjects-grid {

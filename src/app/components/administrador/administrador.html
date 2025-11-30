@@ -1,4 +1,4 @@
-<!-- Vista de Administrador -   -->
+<!-- Vista de Administrador -->
 
 <!-- Contenedor para las notificaciones personalizadas -->
 <div class="notification-container">
@@ -7,6 +7,9 @@
   </div>
 </div>
 <main>
+  <!-- Sidebar Reactivo por Rol -->
+  <app-sidebar [currentRole]="currentRole"></app-sidebar>
+
   <div class="main-content">
     <!-- Header -->
     <div class="top-header">
@@ -282,8 +285,12 @@
             <!-- Lista de docentes existentes -->
             <div class="list-section">
               <h4>Docentes Activos</h4>
+              <!-- Filtro de búsqueda -->
+              <div class="filter-bar">
+                <input type="text" [(ngModel)]="teacherSearchTerm" placeholder="Buscar docente..." class="search-input">
+              </div>
               <div class="item-list">
-                <div class="list-item" *ngFor="let teacher of teachers">
+                <div class="list-item" *ngFor="let teacher of filteredTeachers">
                   <span class="item-name" id="{{teacher.id}}">{{teacher.nombre}}</span>
                   <div class="actions-container docente-actions">
                     <select name="subject-to-assign" class="form-control" id="subject-to-assign-{{teacher.id}}" #materiaSelect>
@@ -307,6 +314,10 @@
             <h3>Gestión de Estudiantes</h3>
             <div class="list-section">
               <h4>Listado de Estudiantes</h4>
+              <!-- Filtro de búsqueda -->
+              <div class="filter-bar">
+                <input type="text" [(ngModel)]="studentSearchTerm" placeholder="Buscar por nombre o DNI..." class="search-input">
+              </div>
               <div class="table-container">
                 <table class="admin-table">
                   <thead>
@@ -317,7 +328,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr *ngFor="let student of students">
+                    <tr *ngFor="let student of filteredStudents">
                       <td>{{student.nombre}}</td>
                       <td>{{student.dni}}</td>
                       <td class="text-right"><button type="button" class="btn btn-danger" (click)="deleteUser(student.id)">Borrar</button></td>

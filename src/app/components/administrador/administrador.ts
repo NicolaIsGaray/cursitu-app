@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
@@ -8,14 +9,69 @@ import { Subjects } from '../../models/subjects';
 import { SubjectsService } from '../../services/subjects.service';
 import { Classroom } from '../../models/classroom';
 import { ClassroomService } from '../../services/classroom.service';
+import { Sidebar, UserRole } from '../sidebar/sidebar';
 
 @Component({
   selector: 'app-administrador',
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule, Sidebar],
   templateUrl: './administrador.html',
   styleUrl: './administrador.css',
 })
 export class Administrador {
+  // Rol del usuario para el sidebar
+  currentRole: UserRole = 'admin';
+
+  /**
+   * ═══════════════════════════════════════════════════════════════
+   * FILTRO FRONTEND-ONLY - Para conectar al backend leer esto:
+   * ═══════════════════════════════════════════════════════════════
+   * Campo UI: studentSearchTerm (input text)
+   * Tipo: string
+   * Filtra por: nombre o DNI del estudiante (case-insensitive)
+   *
+   * CÓMO CONECTAR AL BACKEND:
+   * 1. Crear endpoint: GET /api/usuarios/estudiantes?search={studentSearchTerm}
+   * 2. En UserService, agregar método:
+   *    searchStudents(term: string): Observable<User[]>
+   * 3. Reemplazar el getter 'filteredStudents' por llamada al service
+   * ═══════════════════════════════════════════════════════════════
+   */
+  studentSearchTerm: string = '';
+
+  get filteredStudents(): User[] {
+    if (!this.students) return [];
+    if (!this.studentSearchTerm.trim()) return this.students;
+    const term = this.studentSearchTerm.toLowerCase();
+    return this.students.filter(s =>
+      s.nombre.toLowerCase().includes(term) ||
+      s.dni.toString().includes(term)
+    );
+  }
+
+  /**
+   * ═══════════════════════════════════════════════════════════════
+   * FILTRO FRONTEND-ONLY - Para conectar al backend leer esto:
+   * ═══════════════════════════════════════════════════════════════
+   * Campo UI: teacherSearchTerm (input text)
+   * Tipo: string
+   * Filtra por: nombre del docente (case-insensitive)
+   *
+   * CÓMO CONECTAR AL BACKEND:
+   * 1. Crear endpoint: GET /api/usuarios/docentes?search={teacherSearchTerm}
+   * 2. En UserService, agregar método:
+   *    searchTeachers(term: string): Observable<User[]>
+   * 3. Reemplazar el getter 'filteredTeachers' por llamada al service
+   * ═══════════════════════════════════════════════════════════════
+   */
+  teacherSearchTerm: string = '';
+
+  get filteredTeachers(): User[] {
+    if (!this.teachers) return [];
+    if (!this.teacherSearchTerm.trim()) return this.teachers;
+    return this.teachers.filter(t =>
+      t.nombre.toLowerCase().includes(this.teacherSearchTerm.toLowerCase())
+    );
+  }
 
   // Muestra un mensaje de error específico
   showError(error: string) {

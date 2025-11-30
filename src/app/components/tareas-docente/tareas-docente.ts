@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { Sidebar, UserRole } from '../sidebar/sidebar';
 
 // Interfaz para los estudiantes
 interface Student {
@@ -20,11 +21,13 @@ interface Subject {
 
 @Component({
   selector: 'app-tareas-docente',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, Sidebar],
   templateUrl: './tareas-docente.html',
   styleUrl: './tareas-docente.css',
 })
 export class TareasDocente {
+  // Rol del usuario para el sidebar
+  currentRole: UserRole = 'docente';
   // Dropdown de "Tareas" está expandido por defecto
   isTasksExpanded = true;
 
